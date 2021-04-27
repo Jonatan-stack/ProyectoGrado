@@ -30,4 +30,8 @@ export class SelectClasesComponent implements OnInit {
     })
   }
 
+  public selectAsignatura(asignatura){
+    console.log(asignatura)
+  }
+
 }
