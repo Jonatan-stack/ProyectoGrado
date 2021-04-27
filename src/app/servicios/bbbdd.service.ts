@@ -60,7 +60,6 @@ export class BbbddService {
   }
 
   //No actualiza los datos del firebase.User perse, si no la base de datos
-  //Esto hay que cambiarlo para que solo reciba un parametro Usuario de tipo Usuario y trabajar con objetos
   public updateUserData(usuario: Usuario) {
     const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(`Usuarios/${usuario.uid}`);
     const userData: Usuario = {
