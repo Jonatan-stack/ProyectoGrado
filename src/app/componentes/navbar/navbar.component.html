@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand" routerLink="/inicio">PFC</a>
+
+  <button class="navbar-toggler navbar-toggler-right" type="button" aria-controls="appNavigation" aria-expanded="!isCollapsed" aria-label="Toggle navigation" (click)="toggleMenu()">
+  <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
+      <div class="navbar-nav mr-auto">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" routerLink="/home">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" routerLink="/selectClases">Seleccion de Clases</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav mx-auto" *ngIf="user$ | async as user; else login">
+            <li class="nav-item" *ngIf="user">
+              <a href="#" class="nav-link" (click)="onLogout()">Logout</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"> {{ user?.email }}</a>
+            </li>
+          </ul>
+          <ng-template #login>
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/login">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/registro">Register</a>
+              </li>
+            </ul>
+          </ng-template>
+      </div>
+  </div>
+</nav>
+
+  
