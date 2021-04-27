@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.user$.subscribe(a =>{
       if(this.user$){
-        this.bbdd.getRol(a.email).subscribe((usuario: Usuario) => {
+        this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
           let rol = usuario.role
           this.redirecUser(rol)
         })
@@ -39,10 +39,8 @@ export class LoginComponent implements OnInit {
     try {
       let user = await this.bbdd.login(email, password);
       if(user){
-        let uid = this.bbdd.obtenerUID();
-        console.log(uid);
         //Obtener el rol para saber donde redireccionarlo
-        this.bbdd.getRol(email).subscribe((usuario: Usuario) => {
+        this.bbdd.getRol(user.uid).subscribe((usuario: Usuario) => {
           let rol = usuario.role
           this.redirecUser(rol)
         })
@@ -54,7 +52,7 @@ export class LoginComponent implements OnInit {
   }
 
   private redirecUser(rol: String) {
-    if (rol == 'Alumno') {
+    if (rol == 'Profesor') {
       this.router.navigate(['/home']);
     } else {
       this.router.navigate(['/registro']);
@@ -62,12 +60,3 @@ export class LoginComponent implements OnInit {
   }
   
 }
-//redirec si esta un usuario logueado y se redirecciona dependiendo del ROL
-/*this.user$.subscribe(a =>{
-      if(this.user$){
-        this.bbdd.getRol(a.email).subscribe((usuario: Usuario) => {
-          let rol = usuario.role
-          this.redirecUser(rol)
-        })
-      }
-    });*/
