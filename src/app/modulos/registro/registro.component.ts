@@ -31,7 +31,7 @@ export class RegistroComponent implements OnInit {
   ngOnInit(): void {
     this.user$.subscribe(a =>{
       if(this.user$){
-        this.bbdd.getRol(a.email).subscribe((usuario: Usuario) => {
+        this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
           let rol = usuario.role
           this.redirecUser(rol)
         })
@@ -45,7 +45,15 @@ export class RegistroComponent implements OnInit {
       const user = await this.bbdd.register(email, password);
       if (user) {
         const { nombre, apellidos, rolSelect, dni, telefono } = this.registerForm.value;
-        this.bbdd.updateUserData(user, user.uid, nombre, apellidos, rolSelect, dni, telefono)
+        const usuario: Usuario = {
+          email: user.email,
+          displayName: nombre + ' ' + apellidos,
+          dni: dni,
+          telefono: telefono,
+          role: rolSelect,
+          uid: user.uid
+        };
+        this.bbdd.updateUserData(usuario)
         this.redirecUser(rolSelect);
       }
     } catch (error) {

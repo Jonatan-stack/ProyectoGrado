@@ -59,35 +59,25 @@ export class BbbddService {
     return uid;
   }
 
-  public obtenerUsuario(){
-    //const user = firebase.auth().onAuthStateChanged();
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        console.log("usuario");
-      } else {
-        console.log("usuario nullo");
-      }
-    });
-  }
-
   //No actualiza los datos del firebase.User perse, si no la base de datos
-  public updateUserData(usuario: Usuario, uid: string, nombre: string, apellidos: string, rolSelect: string, dni: string, telefono: number) {
-    const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(`Alumnos/${usuario.email}`);
+  //Esto hay que cambiarlo para que solo reciba un parametro Usuario de tipo Usuario y trabajar con objetos
+  public updateUserData(usuario: Usuario) {
+    const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(`Usuarios/${usuario.uid}`);
     const userData: Usuario = {
       email: usuario.email,
-      displayName: nombre +' '+ apellidos,
-      emailVerified: usuario.emailVerified,
-      role: rolSelect,
-      dni: dni,
-      telefono: telefono,
-      uid: uid,
+      displayName: usuario.displayName,
+      emailVerified: false,
+      role: usuario.role,
+      dni: usuario.dni,
+      telefono: usuario.telefono,
+      uid: usuario.uid,
     }
     //merger si el usuario ya existe le combina los dato nuevos
     return userRef.set(userData, { merge: true });
   }
 
-  public getRol(email: string){
-    return this.afs.collection('Alumnos').doc(email).valueChanges()
+  public getRol(uid: string){
+    return this.afs.collection('Usuarios').doc(uid).valueChanges()
     //Prueba de obtener el rol
     /*this.afs.collection('Alumnos').doc(email).valueChanges().subscribe((usuario: Usuario) => {
       if(usuario.role != ''){
