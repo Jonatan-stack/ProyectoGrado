@@ -15,7 +15,12 @@ import  firebase  from 'firebase/app';
 })
 export class BbbddService {
 
-  private asignaturasCollection: AngularFirestoreCollection<Clase>;
+  private usuariosCollection: AngularFirestoreCollection<Usuario>;
+  private usuarioDoc: AngularFirestoreDocument<Usuario>;
+  private usuarios: Observable<Usuario[]>;
+  private usuario: Observable<Usuario>;
+
+  private clasesCollection: AngularFirestoreCollection<Clase>;
   private clases: Observable<Clase[]>;
 
   constructor(public angularAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
@@ -77,24 +82,11 @@ export class BbbddService {
 
   public getRol(uid: string){
     return this.afs.collection('Usuarios').doc(uid).valueChanges()
-    //Prueba de obtener el rol
-    /*this.afs.collection('Alumnos').doc(email).valueChanges().subscribe((usuario: Usuario) => {
-      if(usuario.role != ''){
-        if(usuario.role == 'Alumno'){
-          console.log('Es alumno')
-          rol = true
-        }
-        else{
-          console.log('Es profesor')
-        }
-      }
-      return rol;
-    })*/
   }
 
   public getClases(){
-    this.asignaturasCollection = this.afs.collection<Clase>('Clases');
-    return this.clases = this.asignaturasCollection.snapshotChanges()
+    this.clasesCollection = this.afs.collection<Clase>('Clases');
+    return this.clases = this.clasesCollection.snapshotChanges()
       .pipe(map(changes => {
         return changes.map(action => {
           const data = action.payload.doc.data() as Clase;
@@ -102,6 +94,30 @@ export class BbbddService {
           return data;
         });
       }));
+  }
+
+  public getUsuarios(){
+    this.usuariosCollection = this.afs.collection<Usuario>('Usuarios');
+    return this.usuarios = this.usuariosCollection.snapshotChanges()
+      .pipe(map(changes => {
+        return changes.map(action => {
+          const data = action.payload.doc.data() as Usuario;
+          console.log(data)
+          return data;
+        })
+      }))
+  }
+
+  public guardarAsignatura(uid: string, asignatura: string){
+    let asignaturas = this.getRol(uid).subscribe((usuario: Usuario) => {
+      return usuario.asignaturas;
+    })
+    console.log(asignaturas)
+    const userRef: AngularFirestoreDocument = this.afs.doc(`Usuarios/${uid}`);
+    const data = {
+      asignaturas: [asignatura]
+    }
+    userRef.update(data);
   }
 
 }

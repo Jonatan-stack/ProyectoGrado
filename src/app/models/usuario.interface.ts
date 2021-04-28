@@ -8,6 +8,6 @@ export interface Usuario {
   role?: string;
   dni?: string;
   telefono?: string;
-  clases?: string[];
+  asignaturas?: string[];
   uid: string;
 }

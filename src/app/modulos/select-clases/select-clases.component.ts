@@ -4,6 +4,7 @@ import { Observable} from 'rxjs';
 import { Router } from '@angular/router';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
+import { Usuario } from '../../models/usuario.interface';
 
 @Component({
   selector: 'app-select-clases',
@@ -12,26 +13,34 @@ import { BbbddService } from '../../servicios/bbbdd.service';
 })
 export class SelectClasesComponent implements OnInit {
 
+  public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
+  public uid;
+
   public clases = [];
   public asignaturas = [];
 
   constructor(private bbdd: BbbddService, private router: Router) {
-
   }
 
   async ngOnInit(){
+    this.user$.subscribe(a =>{
+      if(this.user$){
+        this.uid = a.uid;
+      }
+    });
+
     this.guardarClases();
   }
 
   public async guardarClases(){
     this.bbdd.getClases().subscribe(clases => {
-      console.log('Clases', clases);
       this.clases = clases;
     })
   }
 
   public selectAsignatura(asignatura){
-    console.log(asignatura)
+    console.log(asignatura);
+    this.bbdd.guardarAsignatura(this.uid, asignatura)
   }
 
 }
