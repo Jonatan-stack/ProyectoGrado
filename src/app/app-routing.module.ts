@@ -6,7 +6,8 @@ const routes: Routes = [
   { path: 'registro', loadChildren: () => import('./modulos/registro/registro.module').then(m => m.RegistroModule) }, 
   { path: 'login', loadChildren: () => import('./modulos/login/login.module').then(m => m.LoginModule) },
   { path: 'home', loadChildren: () => import('./modulos/home/home.module').then(m => m.HomeModule) },
-  { path: 'selectClases', loadChildren: () => import('./modulos/select-clases/select-clases.module').then(m => m.SelectClasesModule) }
+  { path: 'selectClases', loadChildren: () => import('./modulos/select-clases/select-clases.module').then(m => m.SelectClasesModule) },
+  { path: 'listaAlumnos', loadChildren: () => import('./modulos/lista-alumnos/lista-alumnos.module').then(m => m.ListaAlumnosModule) }
 ];
 
 @NgModule({

@@ -18,7 +18,7 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
