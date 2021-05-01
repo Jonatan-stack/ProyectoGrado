@@ -26,6 +26,8 @@ export class SelectClasesComponent implements OnInit {
     this.user$.subscribe(a =>{
       if(this.user$){
         this.uid = a.uid;
+        console.log(this.uid)
+        this.obtenerAsignaturasDelUsuario(this.uid);
       }
     });
 
@@ -38,9 +40,26 @@ export class SelectClasesComponent implements OnInit {
     })
   }
 
+  public obtenerAsignaturasDelUsuario(uid: string){
+    this.bbdd.getOneUser(uid).subscribe(usuario => {
+      this.uid = usuario.uid;
+      this.asignaturas = usuario.asignaturas;
+    });
+  }
+
   public selectAsignatura(asignatura){
-    console.log(asignatura);
-    this.bbdd.guardarAsignatura(this.uid, asignatura)
+    if(this.contieneEsa(asignatura) == false){
+      this.asignaturas.push(asignatura);
+      console.log(this.asignaturas);
+      this.bbdd.guardarAsignatura(this.uid, this.asignaturas)
+    }
+    else{
+      console.log('Ya la tiene');
+    }
+  }
+
+  public contieneEsa(asignatura){
+    return this.asignaturas.includes(asignatura)
   }
 
 }

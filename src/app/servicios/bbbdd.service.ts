@@ -85,7 +85,7 @@ export class BbbddService {
   }
 
   public getClases(){
-    this.clasesCollection = this.afs.collection<Clase>('Clases');
+    this.clasesCollection = this.afs.collection<Clase>('Clases',  ref => ref.where('Asignaturas', '!=', 'null'));
     return this.clases = this.clasesCollection.snapshotChanges()
       .pipe(map(changes => {
         return changes.map(action => {
@@ -102,22 +102,42 @@ export class BbbddService {
       .pipe(map(changes => {
         return changes.map(action => {
           const data = action.payload.doc.data() as Usuario;
-          console.log(data)
           return data;
         })
       }))
   }
 
-  public guardarAsignatura(uid: string, asignatura: string){
-    let asignaturas = this.getRol(uid).subscribe((usuario: Usuario) => {
-      return usuario.asignaturas;
-    })
-    console.log(asignaturas)
+  //Con este metodo obtendras cualquier usuario que en el campo ASIGNATURAS que es un ARRAY tenga la asignatura seleccionada
+  public getUsuariosAsignatura(asignatura: string){
+    this.usuariosCollection = this.afs.collection<Usuario>('Usuarios', ref => ref.where('asignaturas', 'array-contains-any', [asignatura]));
+    return this.usuarios = this.usuariosCollection.snapshotChanges()
+      .pipe(map(changes => {
+        return changes.map(action => {
+          const data = action.payload.doc.data() as Usuario;
+          return data;
+        })
+      }))
+  }
+
+  public getOneUser(uid: string) {
+    this.usuarioDoc = this.afs.doc<Usuario>(`Usuarios/${uid}`);
+    return this.usuario = this.usuarioDoc.snapshotChanges().pipe(map(action => {
+      if (action.payload.exists === false) {
+        return null;
+      } else {
+        const data = action.payload.data() as Usuario;
+        data.uid = action.payload.id;
+        return data;
+      }
+    }));
+  }
+
+  public guardarAsignatura(uid: string, asignaturas: string[]){
     const userRef: AngularFirestoreDocument = this.afs.doc(`Usuarios/${uid}`);
     const data = {
-      asignaturas: [asignatura]
+      asignaturas: asignaturas
     }
-    userRef.update(data);
+    userRef.set(data, { merge: true });
   }
 
 }

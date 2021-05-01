@@ -11,16 +11,26 @@ import { Usuario } from '../../models/usuario.interface';
 export class ListaAlumnosComponent implements OnInit {
 
   public usuarios = [];
+  public usuariosX = [];
+  public asignaturas = [];
+  public asignatura = 'Bases de Datos';
 
   constructor(private bbdd: BbbddService) { }
 
   ngOnInit(): void {
     this.obtenerUsuarios();
+    this.obtenerUsuarioAsignatura();
   }
 
   public async obtenerUsuarios(){
     this.bbdd.getUsuarios().subscribe(usuarios => {
       this.usuarios = usuarios;
+    })
+  }
+
+  public obtenerUsuarioAsignatura(){
+    this.bbdd.getUsuariosAsignatura(this.asignatura).subscribe(usuarios => {
+      this.usuariosX = usuarios;
     })
   }
 

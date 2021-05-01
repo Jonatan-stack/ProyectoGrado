@@ -11,7 +11,7 @@
             <p>Falta</p>
         </div>
     </div>
-    <div class="alumnos" *ngFor="let usuario of usuarios">
+    <div class="alumnos" *ngFor="let usuario of usuariosX">
         <div class="row text-center" *ngIf="(usuario.role == 'Alumno')">
             <div class="col">
                 {{usuario.displayName}}
