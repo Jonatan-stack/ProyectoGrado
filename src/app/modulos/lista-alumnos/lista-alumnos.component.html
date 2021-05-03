@@ -1,5 +1,20 @@
 <!--Añadir un campo select para seleccionar la asignatura a la q se quiera pasar lista, este deberia tener las asignaturas a la q pertenece el profesor-->
 <div class="container">
+
+    <form [formGroup]="filterForm" (ngSubmit)="filtrarAlumnos()">
+        <div class="form-group">
+            <label for="rolSelect">Seleccione la asignatura</label>
+            <select class="form-control" id="asignaturaSelect" formControlName="asignaturaSelect">
+                <option *ngFor="let asignatura of asignaturasProfesor">
+                    {{asignatura}}
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+            Filtrar
+        </button>
+    </form>
+
     <div class="row text-center">
         <div class="col">
             <p>Nombre</p>
@@ -11,7 +26,7 @@
             <p>Falta</p>
         </div>
     </div>
-    <div class="alumnos" *ngFor="let usuario of usuariosX">
+    <div class="alumnos" *ngFor="let usuario of alumnos">
         <div class="row text-center" *ngIf="(usuario.role == 'Alumno')">
             <div class="col">
                 {{usuario.displayName}}

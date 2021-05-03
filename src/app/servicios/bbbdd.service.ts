@@ -74,6 +74,7 @@ export class BbbddService {
       role: usuario.role,
       dni: usuario.dni,
       telefono: usuario.telefono,
+      asignaturas: [],
       uid: usuario.uid,
     }
     //merger si el usuario ya existe le combina los dato nuevos
