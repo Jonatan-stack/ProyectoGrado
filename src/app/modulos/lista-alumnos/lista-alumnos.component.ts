@@ -55,4 +55,9 @@ export class ListaAlumnosComponent implements OnInit {
     })
   }
 
+  public ponerFalta(){
+    let f = new Date;
+    console.log(f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes())
+  }
+
 }
