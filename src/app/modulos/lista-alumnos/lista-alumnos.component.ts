@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
-import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -20,6 +19,7 @@ export class ListaAlumnosComponent implements OnInit {
   public usuarios = [];
   public alumnos = [];
   public asignaturasProfesor = [];
+  public clases = [];
 
   constructor(private bbdd: BbbddService) { }
 
@@ -31,6 +31,7 @@ export class ListaAlumnosComponent implements OnInit {
     });
 
     this.obtenerUsuarioAsignatura();
+    this.obtenerClases();
   }
 
   public async obtenerProfesor(uid: string){
@@ -44,6 +45,13 @@ export class ListaAlumnosComponent implements OnInit {
   public obtenerUsuarioAsignatura(){
     this.bbdd.getUsuarios().subscribe(usuarios => {
       this.alumnos = usuarios;
+    })
+  }
+
+  public obtenerClases(){
+    this.bbdd.getClases().subscribe(clases => {
+      this.clases = clases;
+      this.filterCurso = this.clases[0];
     })
   }
 

@@ -1,4 +1,3 @@
-<!--Añadir un campo select para seleccionar la asignatura a la q se quiera pasar lista, este deberia tener las asignaturas a la q pertenece el profesor-->
 <div class="container">
 
     <div class="form-group">
@@ -8,34 +7,24 @@
             </option>
         </select>
         <select class="form-control" id="cursoSelect" [(ngModel)] = "filterCurso">
-            <option>
-                1DAM
+            <option *ngFor="let clase of clases">
+                {{ clase.id }}
             </option>
         </select>
     </div>
 
-    <div class="row text-center">
-        <div class="col">
-            <p>Nombre</p>
-        </div>
-        <div class="col">
-            <p>DNI</p>
-        </div>
-        <div class="col">
-            <p>Falta</p>
-        </div>
-    </div>
-    <div class="alumnos" *ngFor="let usuario of alumnos | filter:filterAsignatura | filter:filterCurso">
-        <div class="row text-center" *ngIf="(usuario.role == 'Alumno')">
-            <div class="col">
-                {{usuario.displayName}}
-            </div>
-            <div class="col">
-                {{usuario.dni}}
-            </div>
-            <div class="col">
-                <button type="button" class="btn btn-primary">Falta</button>
-            </div>
-        </div>
-    </div>
+    <table class="table table-striped table-bordered">
+        <tr class="text-center">
+            <td>Nombre</td>
+            <td>DNI</td>
+            <td>Falta</td>
+        </tr>
+        <tr class="text-center" *ngFor="let usuario of alumnos | filter:filterAsignatura | filter:filterCurso">
+            <ng-container *ngIf="(usuario.role == 'Alumno')">
+                <td>{{usuario.displayName}}</td>
+                <td>{{usuario.dni}}</td>
+                <td><button type="button" class="btn btn-primary">Falta</button></td>
+            </ng-container>
+        </tr>
+    </table>
 </div>
