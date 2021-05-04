@@ -14,6 +14,7 @@ import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { NavbarComponent } from './componentes/navbar/navbar.component';
+import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    AngularFireStorageModule
+    AngularFireStorageModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

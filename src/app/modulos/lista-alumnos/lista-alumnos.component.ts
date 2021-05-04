@@ -14,14 +14,12 @@ export class ListaAlumnosComponent implements OnInit {
 
   public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
 
-  filterForm = new FormGroup({
-    asignaturaSelect: new FormControl(''),
-  });
+  filterAsignatura = '';
+  filterCurso = '';
 
   public usuarios = [];
   public alumnos = [];
   public asignaturasProfesor = [];
-  public asignatura;
 
   constructor(private bbdd: BbbddService) { }
 
@@ -31,27 +29,22 @@ export class ListaAlumnosComponent implements OnInit {
         this.obtenerProfesor(a.uid);
       }
     });
-    //this.obtenerUsuarioAsignatura();
+
+    this.obtenerUsuarioAsignatura();
   }
 
   public async obtenerProfesor(uid: string){
     this.bbdd.getOneUser(uid).subscribe(usuario => {
       this.asignaturasProfesor = usuario.asignaturas;
-      console.log(usuario.asignaturas);
+      //hace que el filtro empiece siempre por la primera asignatura del profesor
+      this.filterAsignatura = this.asignaturasProfesor[0];
     });
   }
 
   public obtenerUsuarioAsignatura(){
-    this.bbdd.getUsuariosAsignatura(this.asignatura).subscribe(usuarios => {
+    this.bbdd.getUsuarios().subscribe(usuarios => {
       this.alumnos = usuarios;
     })
-  }
-
-  //esto no funciona
-  filtrarAlumnos(){
-    this.asignatura = this.filterForm.value
-    console.log(this.asignatura) 
-    this.obtenerUsuarioAsignatura();
   }
 
 }

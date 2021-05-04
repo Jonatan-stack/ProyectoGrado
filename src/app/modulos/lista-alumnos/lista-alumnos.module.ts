@@ -6,8 +6,13 @@ import { ListaAlumnosComponent } from './lista-alumnos.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { FilterPipe } from '../../pipes/filter.pipe';
+
 @NgModule({
-  declarations: [ListaAlumnosComponent],
+  declarations: [
+    ListaAlumnosComponent,
+    FilterPipe
+  ],
   imports: [
     CommonModule,
     ListaAlumnosRoutingModule,

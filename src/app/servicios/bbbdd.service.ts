@@ -109,8 +109,8 @@ export class BbbddService {
   }
 
   //Con este metodo obtendras cualquier usuario que en el campo ASIGNATURAS que es un ARRAY tenga la asignatura seleccionada
-  public getUsuariosAsignatura(asignatura: string){
-    this.usuariosCollection = this.afs.collection<Usuario>('Usuarios', ref => ref.where('asignaturas', 'array-contains-any', [asignatura]));
+  public getUsuariosAsignatura(asignaturas: string){
+    this.usuariosCollection = this.afs.collection<Usuario>('Usuarios', ref => ref.where('asignaturas', 'array-contains-any', [asignaturas]));
     return this.usuarios = this.usuariosCollection.snapshotChanges()
       .pipe(map(changes => {
         return changes.map(action => {
