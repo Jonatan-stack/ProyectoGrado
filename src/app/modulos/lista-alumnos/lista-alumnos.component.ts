@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
+import { MailerService } from '../../servicios/mailer.service';
 import { Usuario } from '../../models/usuario.interface';
 import { Observable } from 'rxjs';
 
@@ -21,7 +22,7 @@ export class ListaAlumnosComponent implements OnInit {
   public asignaturasProfesor = [];
   public clases = [];
 
-  constructor(private bbdd: BbbddService) { }
+  constructor(private bbdd: BbbddService, private mailer: MailerService) { }
 
   ngOnInit(): void {
     this.user$.subscribe(a =>{
@@ -55,9 +56,12 @@ export class ListaAlumnosComponent implements OnInit {
     })
   }
 
-  public ponerFalta(){
+  public ponerFalta(usuario: Usuario){
     let f = new Date;
     console.log(f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes())
+    this.mailer.sendMessage(usuario).subscribe(() => {
+      //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
+    });
   }
 
 }

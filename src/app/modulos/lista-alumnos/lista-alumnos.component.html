@@ -23,7 +23,7 @@
             <ng-container *ngIf="(usuario.role == 'Alumno')">
                 <td>{{usuario.displayName}}</td>
                 <td>{{usuario.dni}}</td>
-                <td><button type="button" class="btn btn-primary" (click)="ponerFalta()">Falta</button></td>
+                <td><button type="button" class="btn btn-primary" (click)="ponerFalta(usuario)">Falta</button></td>
             </ng-container>
         </tr>
     </table>

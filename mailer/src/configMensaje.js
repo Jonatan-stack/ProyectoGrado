@@ -4,19 +4,19 @@ module.exports = (formulario) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'tuemail@gmail.com', // Cambialo por tu email
-      pass: 'tupassword' // Cambialo por tu password
+      user: 'emailparapfc@gmail.com', // Cambialo por tu email
+      pass: 'pqbbidoiemeikvhn' // Cambialo por tu password
     }
   });
 
   const mailOptions = {
-    from: `"${formulario.nombre} 👻" <${formulario.email}>`,
-    to: 'destinatario', // Cambia esta parte por el destinatario
-    subject: formulario.asunto,
+    from: `"${formulario.displayName} 👻" <${formulario.email}>`,
+    to: 'jonatanaocv@gmail.com', // Cambia esta parte por el destinatario
+    subject: 'Falta',
     html: `
-    <strong>Nombre:</strong> ${formulario.nombre} <br/>
+    <strong>Nombre:</strong> ${formulario.displayName} <br/>
     <strong>E-mail:</strong> ${formulario.email}  <br/>
-    <strong>Mensaje:</strong> ${formulario.mensaje}
+    <strong>Mensaje:</strong> ${formulario.uid}
     `
   };
 

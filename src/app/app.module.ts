@@ -16,6 +16,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { FilterPipe } from './pipes/filter.pipe';
 
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,6 +31,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFireStorageModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
