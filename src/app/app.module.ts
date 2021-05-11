@@ -14,7 +14,6 @@ import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { NavbarComponent } from './componentes/navbar/navbar.component';
-import { FilterPipe } from './pipes/filter.pipe';
 
 import { HttpClientModule } from '@angular/common/http';
 
