@@ -1,12 +1,12 @@
 <div class="container">
 
     <div class="form-group">
-        <select class="form-control" id="asignaturaSelect" [(ngModel)] = "filterAsignatura">
+        <select class="form-control" id="asignaturaSelect" [(ngModel)] = "filterAsignatura" (change)="onChangeClase($event.target.value)">
             <option *ngFor="let asignatura of asignaturasProfesor">
                 {{asignatura}}
             </option>
         </select>
-        <select class="form-control" id="cursoSelect" [(ngModel)] = "filterCurso">
+        <select class="form-control" id="cursoSelect" [(ngModel)] = "filterCurso" (change)="onChangeCurso($event.target.value)">
             <option *ngFor="let clase of clases">
                 {{ clase.id }}
             </option>
@@ -23,7 +23,7 @@
             <ng-container *ngIf="(usuario.role == 'Alumno')">
                 <td>{{usuario.displayName}}</td>
                 <td>{{usuario.dni}}</td>
-                <td><button type="button" class="btn btn-primary" (click)="ponerFalta(usuario)">Falta</button></td>
+                <td><button type="button" class="btn btn-primary" (click)="redactarMail(usuario)">Falta</button></td>
             </ng-container>
         </tr>
     </table>

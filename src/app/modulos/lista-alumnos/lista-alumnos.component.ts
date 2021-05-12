@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Observable } from 'rxjs';
+
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { MailerService } from '../../servicios/mailer.service';
+
 import { Usuario } from '../../models/usuario.interface';
-import { Observable } from 'rxjs';
+import { Mail } from '../../models/mail.interface';
 
 @Component({
   selector: 'app-lista-alumnos',
@@ -17,10 +20,15 @@ export class ListaAlumnosComponent implements OnInit {
   filterAsignatura = '';
   filterCurso = '';
 
+  public profesor: Usuario;
+
   public usuarios = [];
   public alumnos = [];
   public asignaturasProfesor = [];
   public clases = [];
+
+  public selectClase = '';
+  public selectCurso = '';
 
   constructor(private bbdd: BbbddService, private mailer: MailerService) { }
 
@@ -37,9 +45,11 @@ export class ListaAlumnosComponent implements OnInit {
 
   public async obtenerProfesor(uid: string){
     this.bbdd.getOneUser(uid).subscribe(usuario => {
+      this.profesor = usuario;
       this.asignaturasProfesor = usuario.asignaturas;
       //hace que el filtro empiece siempre por la primera asignatura del profesor
       this.filterAsignatura = this.asignaturasProfesor[0];
+      this.selectClase = this.asignaturasProfesor[0];
     });
   }
 
@@ -56,12 +66,32 @@ export class ListaAlumnosComponent implements OnInit {
     })
   }
 
-  public ponerFalta(usuario: Usuario){
-    let f = new Date;
-    console.log(f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes())
-    this.mailer.sendMessage(usuario).subscribe(() => {
+  public ponerFalta(mail: Mail){
+    this.mailer.sendMessage(mail).subscribe(() => {
       //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
     });
+  }
+
+  public redactarMail(alumno: Usuario){
+    let f = new Date;
+    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes();
+
+    const mail: Mail = {
+      from: this.profesor.displayName,                   
+      emailDestinatario: alumno.email,   
+      asunto: 'Falta',                
+      mensaje: 'Has faltado a ' + this.selectClase + ' del curso ' + this.selectCurso + ' en la fecha ' + fecha,
+    };
+
+    this.ponerFalta(mail);
+  }
+
+  onChangeClase(deviceValue) {
+    this.selectClase = deviceValue;
+  }
+
+  onChangeCurso(deviceValue) {
+    this.selectCurso = deviceValue;
   }
 
 }
