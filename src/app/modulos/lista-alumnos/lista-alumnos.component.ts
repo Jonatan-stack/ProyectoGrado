@@ -7,6 +7,7 @@ import { MailerService } from '../../servicios/mailer.service';
 
 import { Usuario } from '../../models/usuario.interface';
 import { Mail } from '../../models/mail.interface';
+import { Falta } from '../../models/falta.interface';
 
 @Component({
   selector: 'app-lista-alumnos',
@@ -66,16 +67,15 @@ export class ListaAlumnosComponent implements OnInit {
     })
   }
 
-  public ponerFalta(mail: Mail){
-    this.mailer.sendMessage(mail).subscribe(() => {
-      //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
-    });
-  }
-
-  public redactarMail(alumno: Usuario){
+  public ponerFalta(alumno: Usuario){
     let f = new Date;
     let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes();
 
+    this.redactarMail(alumno, fecha);
+    this.setFalta(alumno, fecha);
+  }
+
+  public redactarMail(alumno: Usuario, fecha: string){
     const mail: Mail = {
       from: this.profesor.displayName,                   
       emailDestinatario: alumno.email,   
@@ -83,7 +83,20 @@ export class ListaAlumnosComponent implements OnInit {
       mensaje: 'Has faltado a ' + this.selectClase + ' del curso ' + this.selectCurso + ' en la fecha ' + fecha,
     };
 
-    this.ponerFalta(mail);
+    this.mailer.sendMessage(mail).subscribe(() => {
+      //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
+    });
+  }
+
+  public setFalta(alumno: Usuario, fecha: string){
+    const falta: Falta = {
+      profesor: this.profesor.displayName,
+      alumnoUID: alumno.uid,         
+      asignatura: this.selectClase,
+      fecha: fecha
+    }
+
+    this.bbdd.ponerFalta(falta);
   }
 
   onChangeClase(deviceValue) {

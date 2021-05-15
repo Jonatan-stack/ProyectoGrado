@@ -1,15 +1,16 @@
 import { Injectable, Query } from '@angular/core';
+
 import { Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
-import { Clase } from '../models/clase.interface';
-import { Usuario } from '../models/usuario.interface';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import  firebase  from 'firebase/app';
 
+import { Clase } from '../models/clase.interface';
+import { Usuario } from '../models/usuario.interface';
+import { Falta } from '../models/falta.interface';
 @Injectable({
   providedIn: 'root'
 })
@@ -64,7 +65,7 @@ export class BbbddService {
     return uid;
   }
 
-  //No actualiza los datos del firebase.User perse, si no la base de datos
+  //No actualiza los datos del firebase.User perse, si no la base de datos FireStore
   public updateUserData(usuario: Usuario) {
     const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(`Usuarios/${usuario.uid}`);
     const userData: Usuario = {
@@ -139,6 +140,16 @@ export class BbbddService {
       asignaturas: asignaturas
     }
     userRef.set(data, { merge: true });
+  }
+
+  public ponerFalta(falta: Falta){
+    const faltaData: Falta = {
+      profesor: falta.profesor,
+      alumnoUID: falta.alumnoUID,         
+      asignatura: falta.asignatura,
+      fecha: falta.fecha
+    }
+    this.afs.collection('Faltas').add(faltaData)
   }
 
 }
