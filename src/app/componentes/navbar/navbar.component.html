@@ -7,6 +7,7 @@
 
   <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
       <div class="navbar-nav mr-auto">
+        <ng-container  *ngIf="user$ | async as user; else login">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
               <a class="nav-link" routerLink="/home">Home</a>
@@ -18,7 +19,7 @@
               <a class="nav-link" routerLink="/listaAlumnos">Lista de alumnos</a>
             </li>
           </ul>
-          <ul class="navbar-nav mx-auto" *ngIf="user$ | async as user; else login">
+          <ul class="navbar-nav mx-auto">
             <li class="nav-item" *ngIf="user">
               <a href="#" class="nav-link" (click)="onLogout()">Logout</a>
             </li>
@@ -26,6 +27,7 @@
               <a class="nav-link"> {{ user?.email }}</a>
             </li>
           </ul>
+        </ng-container>
           <ng-template #login>
             <ul class="navbar-nav mx-auto">
               <li class="nav-item">
