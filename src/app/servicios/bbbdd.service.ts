@@ -24,6 +24,9 @@ export class BbbddService {
   private clasesCollection: AngularFirestoreCollection<Clase>;
   private clases: Observable<Clase[]>;
 
+  private faltasCollection: AngularFirestoreCollection<Falta>;
+  private faltas: Observable<Falta[]>;
+
   constructor(public angularAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
   }
 
@@ -150,6 +153,17 @@ export class BbbddService {
       fecha: falta.fecha
     }
     this.afs.collection('Faltas').add(faltaData)
+  }
+
+  public getUsuariosFaltas(alumnoUID: string){
+    this.faltasCollection = this.afs.collection<Falta>('Faltas', ref => ref.where('alumnoUID', '==', alumnoUID));
+    return this.faltas = this.faltasCollection.snapshotChanges()
+      .pipe(map(changes => {
+        return changes.map(action => {
+          const data = action.payload.doc.data() as Falta;
+          return data;
+        })
+      }))
   }
 
 }

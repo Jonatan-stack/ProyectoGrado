@@ -26,7 +26,6 @@ export class SelectClasesComponent implements OnInit {
     this.user$.subscribe(a =>{
       if(this.user$){
         this.uid = a.uid;
-        console.log(this.uid)
         this.obtenerAsignaturasDelUsuario(this.uid);
       }
     });
@@ -50,7 +49,6 @@ export class SelectClasesComponent implements OnInit {
   public selectAsignatura(asignatura){
     if(this.contieneEsa(asignatura) == false){
       this.asignaturas.push(asignatura);
-      console.log(this.asignaturas);
       this.bbdd.guardarAsignatura(this.uid, this.asignaturas)
     }
     else{

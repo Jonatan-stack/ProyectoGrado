@@ -23,7 +23,6 @@ export class ListaAlumnosComponent implements OnInit {
 
   public profesor: Usuario;
 
-  public usuarios = [];
   public alumnos = [];
   public asignaturasProfesor = [];
   public clases = [];
@@ -45,7 +44,7 @@ export class ListaAlumnosComponent implements OnInit {
   }
 
   public async obtenerProfesor(uid: string){
-    this.bbdd.getOneUser(uid).subscribe(usuario => {
+    (await this.bbdd.getOneUser(uid)).subscribe(usuario => {
       this.profesor = usuario;
       this.asignaturasProfesor = usuario.asignaturas;
       //hace que el filtro empiece siempre por la primera asignatura del profesor
@@ -69,7 +68,13 @@ export class ListaAlumnosComponent implements OnInit {
 
   public ponerFalta(alumno: Usuario){
     let f = new Date;
-    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + f.getMinutes();
+    let min = f.getMinutes();
+    let minS = '';
+    if(min <= 0){
+      minS = '';
+      minS = 0 + '' + min
+    }
+    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + minS;
 
     this.redactarMail(alumno, fecha);
     this.setFalta(alumno, fecha);

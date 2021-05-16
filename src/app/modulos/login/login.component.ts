@@ -24,14 +24,14 @@ export class LoginComponent implements OnInit {
   constructor(private bbdd: BbbddService, private router: Router) { }
   
   ngOnInit(): void {
-    this.user$.subscribe(a =>{
-      if(this.user$){
-        this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
-          let rol = usuario.role
-          this.redirecUser(rol)
-        })
-      }
-    });
+      this.user$.subscribe(a =>{
+        if(a.uid != null){
+          this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
+            let rol = usuario.role
+            this.redirecUser(rol)
+          })
+        }
+      });
   }
 
   async onLogin() {
