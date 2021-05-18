@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable} from 'rxjs';
 
+import { FormControl, FormGroup } from '@angular/forms';
+import { NgForm } from '@angular/forms';
+
 import { BbbddService } from '../../servicios/bbbdd.service';
 
 import { Usuario } from '../../models/usuario.interface';
 import { Falta } from '../../models/falta.interface';
+import { Clase } from '../../models/clase.interface';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +27,9 @@ export class HomeComponent implements OnInit {
 
   public stadisticas = [];
 
+  public usuarios = [];
+  public cursos = [];
+
   constructor(private bbdd: BbbddService) {
   }
 
@@ -32,6 +39,9 @@ export class HomeComponent implements OnInit {
         this.uid = a.uid;
         this.obtenerUsuario(this.uid);
         this.guardarFaltas();
+
+          this.guardarUsuarios();
+          this.guardarCursos();
       }
     });
   }
@@ -78,7 +88,61 @@ export class HomeComponent implements OnInit {
           }
       }
    }
-   
+  }
+
+  //Para el admin
+
+  public guardarUsuarios(){
+    this.bbdd.getUsuarios().subscribe(usuarios => {
+      this.usuarios = usuarios;
+    })
+  }
+
+  public guardarCursos(){
+    this.bbdd.getClases().subscribe(clases => {
+      this.cursos = clases;
+    })
+  }
+
+  public eliminarUsuario(uid: string){
+    this.bbdd.eliminarUsuario(uid);
+  }
+
+  public eliminarClase(id: string){
+    this.bbdd.eliminarClase(id);
+  }
+
+  public eliminarAsignatura(clase: Clase, indice: number){
+    var asignaturas = clase.Asignaturas;
+    asignaturas.splice(indice, 1);
+
+    this.bbdd.actualizarClase(clase.id, asignaturas);
+  }
+
+  public anyadirClase(){
+    var addCurso = <HTMLInputElement> document.getElementById('addCursoID');
+    
+    if(!this.comprobarSiEstaCurso(addCurso.value)){
+      this.bbdd.addClase(addCurso.value);
+    }
+  }
+
+  public anyadirAsignatura(){
+
+  }
+
+  public comprobarSiEstaCurso(nombreCurso: String){
+    let esta: Boolean = false
+    var cursosA: Clase[] = this.cursos;
+    let curso: Clase;
+
+    for(curso of cursosA){
+      if(curso.id == nombreCurso){
+        esta = true
+      }
+    }
+
+    return esta;
   }
 
 }

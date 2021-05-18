@@ -49,7 +49,7 @@ export class SelectClasesComponent implements OnInit {
   public selectAsignatura(asignatura){
     if(this.contieneEsa(asignatura) == false){
       this.asignaturas.push(asignatura);
-      this.bbdd.guardarAsignatura(this.uid, this.asignaturas)
+      this.bbdd.guardarAsignaturaUsuario(this.uid, this.asignaturas)
     }
     else{
       console.log('Ya la tiene');

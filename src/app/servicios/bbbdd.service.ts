@@ -22,6 +22,7 @@ export class BbbddService {
   private usuario: Observable<Usuario>;
 
   private clasesCollection: AngularFirestoreCollection<Clase>;
+  private claseDoc: AngularFirestoreDocument<Clase>;
   private clases: Observable<Clase[]>;
 
   private faltasCollection: AngularFirestoreCollection<Falta>;
@@ -101,6 +102,28 @@ export class BbbddService {
       }));
   }
 
+  public eliminarClase(id: string){
+    this.claseDoc = this.afs.doc<Clase>(`Clases/${id}`);
+    this.claseDoc.delete();
+  }
+
+  public actualizarClase(id: string, asignaturas: string[]){
+    const claseRef: AngularFirestoreDocument = this.afs.doc(`Clases/${id}`);
+    const data = {
+      Asignaturas: asignaturas
+    }
+    claseRef.set(data, { merge: true });
+  }
+
+  public addClase(nombre: string){
+    const claseRef: AngularFirestoreDocument<Clase> = this.afs.doc(`Clases/${nombre}`);
+    const claseData: Clase = {
+      Asignaturas: []
+    }
+    //merger si el usuario ya existe le combina los dato nuevos
+    return claseRef.set(claseData, { merge: true });
+  }
+
   public getUsuarios(){
     this.usuariosCollection = this.afs.collection<Usuario>('Usuarios');
     return this.usuarios = this.usuariosCollection.snapshotChanges()
@@ -137,12 +160,17 @@ export class BbbddService {
     }));
   }
 
-  public guardarAsignatura(uid: string, asignaturas: string[]){
+  public guardarAsignaturaUsuario(uid: string, asignaturas: string[]){
     const userRef: AngularFirestoreDocument = this.afs.doc(`Usuarios/${uid}`);
     const data = {
       asignaturas: asignaturas
     }
     userRef.set(data, { merge: true });
+  }
+
+  public eliminarUsuario(uid: string){
+    this.usuarioDoc = this.afs.doc<Usuario>(`Usuarios/${uid}`);
+    this.usuarioDoc.delete();
   }
 
   public ponerFalta(falta: Falta){
