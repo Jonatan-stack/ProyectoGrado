@@ -30,6 +30,12 @@ export class HomeComponent implements OnInit {
   public usuarios = [];
   public cursos = [];
 
+  public selectClase: string;
+  public class: Clase;
+
+  public profesorFaltas = [];
+  public profesorFaltasTotal;
+
   constructor(private bbdd: BbbddService) {
   }
 
@@ -42,6 +48,8 @@ export class HomeComponent implements OnInit {
 
           this.guardarUsuarios();
           this.guardarCursos();
+
+          this.guardarFaltasProfesor();
       }
     });
   }
@@ -88,8 +96,22 @@ export class HomeComponent implements OnInit {
           }
       }
    }
+
+  }
+  //Para el Profesor
+
+  public async guardarFaltasProfesor(){
+    this.bbdd.getProfesorFaltas(this.uid).subscribe(faltas => {
+      this.profesorFaltas = faltas;
+      this.ordenarFaltas();
+      this.profesorFaltasTotal = this.profesorFaltas.length;
+    })
   }
 
+  public eliminarFalta(id: string){
+    this.bbdd.eliminarFalta(id);
+  }
+  
   //Para el admin
 
   public guardarUsuarios(){
@@ -113,10 +135,10 @@ export class HomeComponent implements OnInit {
   }
 
   public eliminarAsignatura(clase: Clase, indice: number){
-    var asignaturas = clase.Asignaturas;
-    asignaturas.splice(indice, 1);
-
-    this.bbdd.actualizarClase(clase.id, asignaturas);
+    var asignaturasNuevas = clase.Asignaturas;
+    asignaturasNuevas.splice(indice, 1);
+    
+    this.bbdd.actualizarClase(clase.id, asignaturasNuevas);
   }
 
   public anyadirClase(){
@@ -128,6 +150,17 @@ export class HomeComponent implements OnInit {
   }
 
   public anyadirAsignatura(){
+    var addAsignatura = <HTMLInputElement> document.getElementById('addAsignaturaID');
+    //console.log(addAsignatura.value)
+    this.bbdd.getOneClase(this.selectClase).subscribe(clase => {
+      if(clase?.Asignaturas != null){
+        if(!this.comprobarSiEstaAsignatura(clase.Asignaturas, addAsignatura.value)){
+          let asignaturas = clase.Asignaturas
+          asignaturas.push(addAsignatura.value);
+          this.bbdd.actualizarClase(this.selectClase, asignaturas);
+        }
+      }
+    });
 
   }
 
@@ -143,6 +176,19 @@ export class HomeComponent implements OnInit {
     }
 
     return esta;
+  }
+
+  public comprobarSiEstaAsignatura(asignaturas: string[], asignatura: string){
+    if(asignaturas.includes(asignatura)){
+      return true
+    }
+    else{
+      return false
+    }
+  }
+
+  onChangeClase(deviceValue) {
+    this.selectClase = deviceValue;
   }
 
 }

@@ -44,7 +44,7 @@ export class ListaAlumnosComponent implements OnInit {
   }
 
   public async obtenerProfesor(uid: string){
-    (await this.bbdd.getOneUser(uid)).subscribe(usuario => {
+    this.bbdd.getOneUser(uid).subscribe(usuario => {
       this.profesor = usuario;
       this.asignaturasProfesor = usuario.asignaturas;
       //hace que el filtro empiece siempre por la primera asignatura del profesor
@@ -74,7 +74,8 @@ export class ListaAlumnosComponent implements OnInit {
       minS = '';
       minS = 0 + '' + min
     }
-    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + minS;
+    
+    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + min;
 
     this.redactarMail(alumno, fecha);
     this.setFalta(alumno, fecha);
@@ -94,14 +95,19 @@ export class ListaAlumnosComponent implements OnInit {
   }
 
   public setFalta(alumno: Usuario, fecha: string){
+    let idFalta = this.profesor.uid + Date.now();
+    console.log(idFalta)
     const falta: Falta = {
+      id: idFalta,
       profesor: this.profesor.displayName,
-      alumnoUID: alumno.uid,         
+      alumno: alumno.displayName,
+      alumnoUID: alumno.uid,       
+      profesorUID: this.profesor.uid,  
       asignatura: this.selectClase,
       fecha: fecha
     }
 
-    this.bbdd.ponerFalta(falta);
+    this.bbdd.ponerFalta(idFalta, falta);
   }
 
   onChangeClase(deviceValue) {

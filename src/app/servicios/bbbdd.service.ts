@@ -24,8 +24,10 @@ export class BbbddService {
   private clasesCollection: AngularFirestoreCollection<Clase>;
   private claseDoc: AngularFirestoreDocument<Clase>;
   private clases: Observable<Clase[]>;
+  private clase: Observable<Clase>
 
   private faltasCollection: AngularFirestoreCollection<Falta>;
+  private faltaDoc: AngularFirestoreDocument<Falta>;
   private faltas: Observable<Falta[]>;
 
   constructor(public angularAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
@@ -102,6 +104,19 @@ export class BbbddService {
       }));
   }
 
+  public getOneClase(id: string) {
+    this.claseDoc = this.afs.doc<Clase>(`Clases/${id}`);
+    return this.clase = this.claseDoc.snapshotChanges().pipe(map(action => {
+      if (action.payload.exists === false) {
+        return null;
+      } else {
+        const data = action.payload.data() as Clase;
+        data.id = action.payload.id;
+        return data;
+      }
+    }));
+  }
+
   public eliminarClase(id: string){
     this.claseDoc = this.afs.doc<Clase>(`Clases/${id}`);
     this.claseDoc.delete();
@@ -120,8 +135,8 @@ export class BbbddService {
     const claseData: Clase = {
       Asignaturas: []
     }
-    //merger si el usuario ya existe le combina los dato nuevos
-    return claseRef.set(claseData, { merge: true });
+
+    claseRef.set(claseData);
   }
 
   public getUsuarios(){
@@ -173,18 +188,39 @@ export class BbbddService {
     this.usuarioDoc.delete();
   }
 
-  public ponerFalta(falta: Falta){
+  public ponerFalta(id: string, falta: Falta){
+    const faltaRef: AngularFirestoreDocument<Falta> = this.afs.doc(`Faltas/${id}`);
     const faltaData: Falta = {
+      id: falta.id,
       profesor: falta.profesor,
-      alumnoUID: falta.alumnoUID,         
+      alumno: falta.alumno,
+      alumnoUID: falta.alumnoUID,
+      profesorUID: falta.profesorUID,
       asignatura: falta.asignatura,
       fecha: falta.fecha
     }
-    this.afs.collection('Faltas').add(faltaData)
+
+    faltaRef.set(faltaData);
+  }
+
+  public eliminarFalta(id: string){
+    this.faltaDoc = this.afs.doc<Falta>(`Faltas/${id}`);
+    this.faltaDoc.delete();
   }
 
   public getUsuariosFaltas(alumnoUID: string){
     this.faltasCollection = this.afs.collection<Falta>('Faltas', ref => ref.where('alumnoUID', '==', alumnoUID));
+    return this.faltas = this.faltasCollection.snapshotChanges()
+      .pipe(map(changes => {
+        return changes.map(action => {
+          const data = action.payload.doc.data() as Falta;
+          return data;
+        })
+      }))
+  }
+
+  public getProfesorFaltas(profesorUID: string){
+    this.faltasCollection = this.afs.collection<Falta>('Faltas', ref => ref.where('profesorUID', '==', profesorUID));
     return this.faltas = this.faltasCollection.snapshotChanges()
       .pipe(map(changes => {
         return changes.map(action => {

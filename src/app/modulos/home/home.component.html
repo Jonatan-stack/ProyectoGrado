@@ -1,6 +1,6 @@
 <div class="container">
     <div class="row">
-      <ng-container  *ngIf="usuario?.role != 'ADMIN'; else administracion">
+      <ng-container  *ngIf="usuario?.role == 'Alumno'; else administracion">
         <div class="col-lg-4">
            <div class="card">
             <div class="card-header">
@@ -60,71 +60,96 @@
            </div>
          </div>
 
-         <div class="col-lg-12">
-            <div class="card">
-               <div class="card-header">
-                  <h5 class="card-header-text">Administracion</h5>
+         <ng-template #profesor>
+            <div class="col-lg-12">
+               <div class="card">
+                  <div class="card-header">
+                     <h5 class="card-header-text">Faltas</h5>
+                  </div>
+                  <p>Has puesto un total de: {{ profesorFaltasTotal }} faltas</p>
+                  <div class="card-block" *ngFor="let falta of profesorFaltas">
+                     <p>{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.alumno }}</p>
+                     <button type="button" class="btn btn-primary" (click)="eliminarFalta(falta.id)">Eliminar</button>
+                  </div>
                </div>
-               <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-                  <li [ngbNavItem]="1">
-                    <a ngbNavLink>Alumnos</a>
-                    <ng-template ngbNavContent>
+            </div>
+         </ng-template>
+
+         <ng-container  *ngIf="usuario?.role == 'ADMIN'; else profesor">
+            <div class="col-lg-12">
+               <div class="card">
+                  <div class="card-header">
+                     <h5 class="card-header-text">Administracion</h5>
+                  </div>
+                  <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+                     <li [ngbNavItem]="1">
+                     <a ngbNavLink>Alumnos</a>
+                     <ng-template ngbNavContent>
+                           <ng-container *ngFor="let x of usuarios">
+                              <div *ngIf="x.role == 'Alumno'">
+                                 <p>{{ x.displayName }} || {{ x.dni }} || {{ x.telefono }}</p>
+                                 <button type="button" class="btn btn-primary" (click)="eliminarUsuario(x.uid)">Eliminar</button>
+                              </div>
+                           </ng-container>
+                     </ng-template>
+                     </li>
+                     <li [ngbNavItem]="2">
+                     <a ngbNavLink>Profesores</a>
+                     <ng-template ngbNavContent>
                         <ng-container *ngFor="let x of usuarios">
-                           <div *ngIf="x.role == 'Alumno'">
+                           <div *ngIf="x.role == 'Profesor'">
                               <p>{{ x.displayName }} || {{ x.dni }} || {{ x.telefono }}</p>
                               <button type="button" class="btn btn-primary" (click)="eliminarUsuario(x.uid)">Eliminar</button>
                            </div>
                         </ng-container>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="2">
-                    <a ngbNavLink>Profesores</a>
-                    <ng-template ngbNavContent>
-                     <ng-container *ngFor="let x of usuarios">
-                        <div *ngIf="x.role == 'Profesor'">
-                           <p>{{ x.displayName }} || {{ x.dni }} || {{ x.telefono }}</p>
-                           <button type="button" class="btn btn-primary" (click)="eliminarUsuario(x.uid)">Eliminar</button>
-                        </div>
-                     </ng-container>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="3">
-                    <a ngbNavLink>Asignaturas</a>
-                    <ng-template ngbNavContent>
-                     <ng-container *ngFor="let a of cursos">
-                        <h3>{{ a.id }} 
-                           <button type="button" class="btn btn-primary btn-sm" (click)="eliminarClase(a.id)">Eliminar Curso</button>
-                        </h3>
-                        <div >
-                           <ul class="list-group list-group-flush" *ngFor="let j of a.Asignaturas; let indice=index">
-                              <li class="list-group-item">{{ j }}
-                                 <button type="button" class="btn btn-primary btn-sm" (click)="eliminarAsignatura(a, indice)">Eliminar Asignatura</button>
-                              </li>
-                            </ul>
-                        </div>
-                     </ng-container>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="4">
-                     <a ngbNavLink>Anyadir Clase/Curso</a>
-                     <ng-template ngbNavContent>
-
-                        <div>
-                           <h4>Anyadir Asignatura</h4>
-                           <label class="mr-4">Nombre del Curso: </label>
-                           <input type="text" id="addCursoID" name="addCursoNombre">
-                           <button type="button" class="btn btn-primary btn-sm" (click)="anyadirClase()">Add curso</button>
-                        </div>
-                        <div>
-                           <h4>Anyadir Asignatura</h4>
-                        </div>
                      </ng-template>
-                   </li>
-                </ul>
-                
-                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                     </li>
+                     <li [ngbNavItem]="3">
+                     <a ngbNavLink>Cursos</a>
+                     <ng-template ngbNavContent>
+                        <ng-container *ngFor="let a of cursos">
+                           <h3>{{ a.id }} 
+                              <button type="button" class="btn btn-primary btn-sm" (click)="eliminarClase(a.id)">Eliminar Curso</button>
+                           </h3>
+                           <div >
+                              <ul class="list-group list-group-flush" *ngFor="let j of a.Asignaturas; let indice=index">
+                                 <li class="list-group-item">{{ j }}
+                                    <button type="button" class="btn btn-primary btn-sm" (click)="eliminarAsignatura(a, indice)">Eliminar Asignatura</button>
+                                 </li>
+                              </ul>
+                           </div>
+                        </ng-container>
+                     </ng-template>
+                     </li>
+                     <li [ngbNavItem]="4">
+                        <a ngbNavLink>Anyadir Clase/Curso</a>
+                        <ng-template ngbNavContent>
+
+                           <div>
+                              <h4>Anyadir Asignatura</h4>
+                              <label class="mr-4">Nombre del Curso: </label>
+                              <input type="text" id="addCursoID" name="addCursoNombre">
+                              <button type="button" class="btn btn-primary btn-sm" (click)="anyadirClase()">Add curso</button>
+                           </div>
+                           <div>
+                              <h4>Anyadir Asignatura</h4>
+                              <label class="mr-4">Nombre de la Asignatura: </label>
+                              <input type="text" id="addAsignaturaID" name="addAsignaturaNombre">
+                              <select class="form-control" id="asignaturaSelect" [(ngModel)] = "filterAsignatura" (change)="onChangeClase($event.target.value)">
+                                 <option *ngFor="let curso of cursos">
+                                    {{curso.id}}
+                                 </option>
+                           </select>
+                              <button type="button" class="btn btn-primary btn-sm" (click)="anyadirAsignatura()">Add Asignatura</button>
+                           </div>
+                        </ng-template>
+                     </li>
+                  </ul>
+                  
+                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+               </div>
             </div>
-         </div>
+         </ng-container>
 
        </ng-template>
      </div>
