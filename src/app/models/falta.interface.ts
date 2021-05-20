@@ -6,4 +6,5 @@ export interface Falta{
     profesorUID: string;
     asignatura: string;
     fecha: string;
+    mailProfesor: string;
 }

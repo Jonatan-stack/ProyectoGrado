@@ -10,4 +10,5 @@ export interface Usuario {
   telefono?: string;
   asignaturas?: string[];
   uid: string;
+  curso?: string[];
 }

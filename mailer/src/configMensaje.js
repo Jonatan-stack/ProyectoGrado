@@ -11,11 +11,16 @@ module.exports = (formulario) => {
 
   const mailOptions = {
     from: ` ${formulario.from} `,
-    to: 'jonatanaocv@gmail.com', // Cambia esta parte por el destinatario
+    to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
     subject: ` ${formulario.asunto}  de  ${formulario.from} `,
-    html: ` ${formulario.mensaje} `
+    html: ` ${formulario.mensaje} `,
+    attachments: [
+      {   // utf-8 string as an attachment
+          filename: 'justificante.txt',
+          content: '`${formulario.archivo}`',
+      }
+    ]
   };
-
   transporter.sendMail(mailOptions, function (err, info) {
     if (err)
       console.log(err)

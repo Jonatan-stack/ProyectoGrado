@@ -18,6 +18,7 @@ export class SelectClasesComponent implements OnInit {
 
   public clases = [];
   public asignaturas = [];
+  public curso;
 
   constructor(private bbdd: BbbddService, private router: Router) {
   }
@@ -28,8 +29,10 @@ export class SelectClasesComponent implements OnInit {
         this.uid = a.uid;
         this.obtenerAsignaturasDelUsuario(this.uid);
       }
+      else{
+        this.router.navigate(['/login']);
+      }
     });
-
     this.guardarClases();
   }
 
@@ -42,22 +45,38 @@ export class SelectClasesComponent implements OnInit {
   public obtenerAsignaturasDelUsuario(uid: string){
     this.bbdd.getOneUser(uid).subscribe(usuario => {
       this.uid = usuario.uid;
+      this.curso = usuario.curso;
       this.asignaturas = usuario.asignaturas;
     });
   }
 
-  public selectAsignatura(asignatura){
-    if(this.contieneEsa(asignatura) == false){
-      this.asignaturas.push(asignatura);
-      this.bbdd.guardarAsignaturaUsuario(this.uid, this.asignaturas)
-    }
-    else{
-      console.log('Ya la tiene');
+  public selectAsignatura(asignatura: string, claseID: string){
+    if(this.contieneCurso(claseID) == false){
+      this.bbdd.guardarCursoUsuario(this.uid, claseID);
+      
+      if(this.contieneEsa(asignatura) == false){
+        this.asignaturas.push(asignatura);
+        this.bbdd.guardarAsignaturaUsuario(this.uid, this.asignaturas)
+      }
+      else{
+        console.log('Ya la tiene');
+      }
     }
   }
 
   public contieneEsa(asignatura){
     return this.asignaturas.includes(asignatura)
+  }
+
+  public contieneCurso(claseID){
+    if(this.curso != null && this.curso != claseID){
+      //deberia haber un alert informando de si quieres cambiar el curso o no y si es Si borrar las asignaturas guardadas, cambiar el curso y guardar las nuevas asignaturas
+      alert('Ya tiene curso')
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
 }

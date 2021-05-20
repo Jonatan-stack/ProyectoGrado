@@ -104,7 +104,8 @@ export class ListaAlumnosComponent implements OnInit {
       alumnoUID: alumno.uid,       
       profesorUID: this.profesor.uid,  
       asignatura: this.selectClase,
-      fecha: fecha
+      fecha: fecha,
+      mailProfesor: this.profesor.email
     }
 
     this.bbdd.ponerFalta(idFalta, falta);

@@ -29,19 +29,23 @@
          </div>
 
          <div class="col-lg-12">
-            <div class="card">
+            <div class="card scroll">
                <div class="card-header">
                   <h5 class="card-header-text">Asistencia</h5>
                </div>
                <p>Has faltado un total de: {{ totalFaltas }} horas</p>
-               <div class="card-block" *ngFor="let falta of faltas">
-                  <p>{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.profesor }}</p>
-               </div>
+               <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngFor="let falta of faltas">
+                  <ngb-panel title="{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.profesor }}">
+                    <ng-template ngbPanelContent>
+                     <input type="file" id="file" (change)="handleFileInput($event.target.files)"><br>
+                    </ng-template>
+                  </ngb-panel>
+               </ngb-accordion>
             </div>
          </div>
       </ng-container>
 
-      <!--ESTA ZONA ES PARA EL USUARIO ADMIN-->
+      <!--ESTA ZONA ES PARA ADMIN y PROFESOR-->
 
       <ng-template #administracion>
 

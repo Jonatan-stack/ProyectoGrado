@@ -5,10 +5,12 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { NgForm } from '@angular/forms';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
+import { MailerService } from '../../servicios/mailer.service';
 
 import { Usuario } from '../../models/usuario.interface';
 import { Falta } from '../../models/falta.interface';
 import { Clase } from '../../models/clase.interface';
+import { Mail } from '../../models/mail.interface';
 
 @Component({
   selector: 'app-home',
@@ -36,7 +38,8 @@ export class HomeComponent implements OnInit {
   public profesorFaltas = [];
   public profesorFaltasTotal;
 
-  constructor(private bbdd: BbbddService) {
+
+  constructor(private bbdd: BbbddService, private mailer: MailerService) {
   }
 
   ngOnInit(): void {
@@ -96,8 +99,28 @@ export class HomeComponent implements OnInit {
           }
       }
    }
-
   }
+
+  handleFileInput(files: FileList) {
+    var file = files.item(0);
+    console.log(file.name)
+    this.redactarMail(file);
+  }
+
+  public redactarMail(archivo: File){
+    const mail: Mail = {
+      from: this.usuario.displayName,                   
+      emailDestinatario: 'profesorMail',   
+      asunto: 'Justificante',                
+      mensaje: 'Justificante ',
+      archivo:  archivo
+    };
+
+    this.mailer.sendMessage(mail).subscribe(() => {
+      //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
+    });
+  }
+
   //Para el Profesor
 
   public async guardarFaltasProfesor(){
