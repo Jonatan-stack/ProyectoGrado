@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
 
+import firebase from 'firebase/app';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -23,15 +25,12 @@ export class LoginComponent implements OnInit {
 
   constructor(private bbdd: BbbddService, private router: Router) { }
   
-  ngOnInit(): void {
-      this.user$.subscribe(a =>{
-        if(a.uid != null){
-          this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
-            let rol = usuario.role
-            this.redirecUser(rol)
-          })
-        }
-      });
+  async ngOnInit() {
+    this.user$.subscribe(a =>{
+      if(a.uid != null){
+        this.redirecUser()
+      }
+    });
   }
 
   async onLogin() {
@@ -39,24 +38,15 @@ export class LoginComponent implements OnInit {
     try {
       let user = await this.bbdd.login(email, password);
       if(user){
-        //Obtener el rol para saber donde redireccionarlo
-        this.bbdd.getRol(user.uid).subscribe((usuario: Usuario) => {
-          let rol = usuario.role
-          this.redirecUser(rol)
-        })
-
+        this.redirecUser()
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  private redirecUser(rol: String) {
-    if (rol == 'Profesor') {
-      this.router.navigate(['/home']);
-    } else {
-      this.router.navigate(['/registro']);
-    }
+  private redirecUser() {
+    this.router.navigate(['/home']);
   }
   
 }

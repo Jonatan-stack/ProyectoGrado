@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
+import firebase from 'firebase/app';
+//import 'firebase/<PACKAGE>';
 
 @Component({
   selector: 'app-select-clases',
@@ -15,25 +17,27 @@ export class SelectClasesComponent implements OnInit {
 
   public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
   public uid;
+  public usuarioRol;
 
   public clases = [];
   public asignaturas = [];
-  public curso;
+  public cursos = [];
 
-  constructor(private bbdd: BbbddService, private router: Router) {
-  }
+  constructor(private bbdd: BbbddService, private router: Router) { }
 
   async ngOnInit(){
-    this.user$.subscribe(a =>{
-      if(this.user$){
-        this.uid = a.uid;
-        this.obtenerAsignaturasDelUsuario(this.uid);
-      }
-      else{
-        this.router.navigate(['/login']);
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.user$.subscribe(a =>{
+          this.uid = a.uid;
+          this.obtenerUsuario(this.uid);
+          this.guardarClases();
+        });
+      } 
+      else {
+          this.redirigir();
       }
     });
-    this.guardarClases();
   }
 
   public async guardarClases(){
@@ -42,41 +46,50 @@ export class SelectClasesComponent implements OnInit {
     })
   }
 
-  public obtenerAsignaturasDelUsuario(uid: string){
+  public obtenerUsuario(uid: string){
     this.bbdd.getOneUser(uid).subscribe(usuario => {
       this.uid = usuario.uid;
-      this.curso = usuario.curso;
+      this.usuarioRol = usuario.role;
+      this.cursos = usuario.cursos;
       this.asignaturas = usuario.asignaturas;
     });
   }
 
   public selectAsignatura(asignatura: string, claseID: string){
     if(this.contieneCurso(claseID) == false){
-      this.bbdd.guardarCursoUsuario(this.uid, claseID);
+      this.cursos.push(claseID);
+      this.bbdd.guardarCursoUsuario(this.uid, this.cursos);
       
-      if(this.contieneEsa(asignatura) == false){
-        this.asignaturas.push(asignatura);
-        this.bbdd.guardarAsignaturaUsuario(this.uid, this.asignaturas)
-      }
-      else{
-        console.log('Ya la tiene');
-      }
+    }
+    if(this.contieneEsa(asignatura) == false){
+      this.asignaturas.push(asignatura);
+      this.bbdd.guardarAsignaturaUsuario(this.uid, this.asignaturas)
+    }
+    else{
+      console.log('Ya la tiene');
     }
   }
 
   public contieneEsa(asignatura){
-    return this.asignaturas.includes(asignatura)
+    return this.asignaturas.includes(asignatura);
   }
 
   public contieneCurso(claseID){
-    if(this.curso != null && this.curso != claseID){
+    if(claseID == '1DAM' && this.cursos.includes('1DAW') || claseID == '1DAW' && this.cursos.includes('1DAM') && this.usuarioRol == 'Alumno'){
+      return true;
+    }
+    else if(this.cursos.includes(claseID)){
       //deberia haber un alert informando de si quieres cambiar el curso o no y si es Si borrar las asignaturas guardadas, cambiar el curso y guardar las nuevas asignaturas
-      alert('Ya tiene curso')
+      console.log('Ya tiene curso')
       return true;
     }
     else{
       return false;
     }
+  }
+
+  public redirigir(){
+    this.router.navigate(['/login']);
   }
 
 }

@@ -83,7 +83,7 @@ export class BbbddService {
       telefono: usuario.telefono,
       asignaturas: [],
       uid: usuario.uid,
-      curso: null
+      cursos: []
     }
     //merger si el usuario ya existe le combina los dato nuevos
     return userRef.set(userData, { merge: true });
@@ -184,10 +184,10 @@ export class BbbddService {
     userRef.set(data, { merge: true });
   }
 
-  public guardarCursoUsuario(uid: string, curso: string){
+  public guardarCursoUsuario(uid: string, cursos: string[]){
     const userRef: AngularFirestoreDocument = this.afs.doc(`Usuarios/${uid}`);
     const data = {
-      curso: curso
+      cursos: cursos
     }
     userRef.set(data, { merge: true });
   }

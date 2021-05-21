@@ -7,8 +7,8 @@
             </option>
         </select>
         <select class="form-control" id="cursoSelect" [(ngModel)] = "filterCurso" (change)="onChangeCurso($event.target.value)">
-            <option *ngFor="let clase of clases">
-                {{ clase.id }}
+            <option *ngFor="let clase of cursosProfesor">
+                {{ clase }}
             </option>
         </select>
     </div>
@@ -20,7 +20,7 @@
             <td>Falta</td>
         </tr>
         <tr class="text-center" *ngFor="let usuario of alumnos | filter:filterAsignatura | filter:filterCurso">
-            <ng-container *ngIf="(usuario.role == 'Alumno')">
+            <ng-container *ngIf="(usuario.role == 'Alumno' && incluyeAmbos(usuario.asignaturas, usuario.cursos))">
                 <td>{{usuario.displayName}}</td>
                 <td>{{usuario.dni}}</td>
                 <td><button type="button" class="btn btn-primary" (click)="ponerFalta(usuario)">Falta</button></td>

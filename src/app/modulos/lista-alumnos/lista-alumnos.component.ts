@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
@@ -8,6 +9,8 @@ import { MailerService } from '../../servicios/mailer.service';
 import { Usuario } from '../../models/usuario.interface';
 import { Mail } from '../../models/mail.interface';
 import { Falta } from '../../models/falta.interface';
+
+import firebase from 'firebase/app';
 
 @Component({
   selector: 'app-lista-alumnos',
@@ -25,44 +28,48 @@ export class ListaAlumnosComponent implements OnInit {
 
   public alumnos = [];
   public asignaturasProfesor = [];
+  public cursosProfesor = [];
   public clases = [];
 
   public selectClase = '';
   public selectCurso = '';
 
-  constructor(private bbdd: BbbddService, private mailer: MailerService) { }
+  constructor(private bbdd: BbbddService, private mailer: MailerService, private router: Router) { }
 
-  ngOnInit(): void {
-    this.user$.subscribe(a =>{
-      if(this.user$){
-        this.obtenerProfesor(a.uid);
+  async ngOnInit() {
+    firebase.auth().onAuthStateChanged((user) =>{
+      if (user) {
+        this.user$.subscribe(a =>{
+          this.obtenerProfesor(a.uid);
+        });
+      } 
+      else {
+        this.redirigir();
       }
     });
-
     this.obtenerUsuarioAsignatura();
-    this.obtenerClases();
   }
 
   public async obtenerProfesor(uid: string){
     this.bbdd.getOneUser(uid).subscribe(usuario => {
-      this.profesor = usuario;
-      this.asignaturasProfesor = usuario.asignaturas;
-      //hace que el filtro empiece siempre por la primera asignatura del profesor
-      this.filterAsignatura = this.asignaturasProfesor[0];
-      this.selectClase = this.asignaturasProfesor[0];
+      if(usuario.role == 'Alumno'){
+        this.redirigir();
+      }
+      else{
+        this.profesor = usuario;
+        this.asignaturasProfesor = usuario.asignaturas;
+        this.cursosProfesor = usuario.cursos;
+        this.filterCurso = this.cursosProfesor[0];
+        //hace que el filtro empiece siempre por la primera asignatura del profesor
+        this.filterAsignatura = this.asignaturasProfesor[0];
+        this.selectClase = this.asignaturasProfesor[0];
+      }
     });
   }
 
   public obtenerUsuarioAsignatura(){
     this.bbdd.getUsuarios().subscribe(usuarios => {
       this.alumnos = usuarios;
-    })
-  }
-
-  public obtenerClases(){
-    this.bbdd.getClases().subscribe(clases => {
-      this.clases = clases;
-      this.filterCurso = this.clases[0];
     })
   }
 
@@ -111,12 +118,25 @@ export class ListaAlumnosComponent implements OnInit {
     this.bbdd.ponerFalta(idFalta, falta);
   }
 
+  public incluyeAmbos(asignaturas: string[], cursos: string[]){
+    if(asignaturas.includes(this.selectClase) && cursos.includes(this.selectCurso)){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   onChangeClase(deviceValue) {
     this.selectClase = deviceValue;
   }
 
   onChangeCurso(deviceValue) {
     this.selectCurso = deviceValue;
+  }
+
+  public redirigir(){
+    this.router.navigate(['/home']);
   }
 
 }

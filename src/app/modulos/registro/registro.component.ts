@@ -66,10 +66,10 @@ export class RegistroComponent implements OnInit {
       this.router.navigate(['/selectClases']);
     } 
     else if (rol == 'Profesor'){
-      this.router.navigate(['/home']);
+      this.router.navigate(['/selectClases']);
     }
     else {
-      this.router.navigate(['/registro']);
+      this.router.navigate(['/home']);
     }
   }
 
