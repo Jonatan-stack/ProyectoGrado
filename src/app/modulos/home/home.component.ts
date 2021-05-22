@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable} from 'rxjs';
-
-import { FormControl, FormGroup } from '@angular/forms';
-import { NgForm } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { MailerService } from '../../servicios/mailer.service';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 import { Usuario } from '../../models/usuario.interface';
 import { Falta } from '../../models/falta.interface';
@@ -38,8 +37,15 @@ export class HomeComponent implements OnInit {
   public profesorFaltas = [];
   public profesorFaltasTotal;
 
+  public urlArchivo: Observable<string>;
+  public urlArchivoFinal: string;
+  public completed = false;
+  public file: File;
+  public subido = false;
+  public enviado = false;
 
-  constructor(private bbdd: BbbddService, private mailer: MailerService) {
+
+  constructor(private bbdd: BbbddService, private mailer: MailerService, private storage: AngularFireStorage) {
   }
 
   ngOnInit(): void {
@@ -101,24 +107,52 @@ export class HomeComponent implements OnInit {
    }
   }
 
-  handleFileInput(files: FileList) {
-    var file = files.item(0);
-    console.log(file.name)
-    this.redactarMail(file);
-  }
+  public redactarMail(url: string){
 
-  public redactarMail(archivo: File){
     const mail: Mail = {
       from: this.usuario.displayName,                   
-      emailDestinatario: 'profesorMail',   
+      emailDestinatario: 'jonatanaocv@gmail.com',   
       asunto: 'Justificante',                
       mensaje: 'Justificante ',
-      archivo:  archivo
+      archivo: this.urlArchivoFinal
     };
 
     this.mailer.sendMessage(mail).subscribe(() => {
       //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
+      this.enviado = true;
     });
+  }
+
+  //Para subir archivos y enviarlo por correo
+
+  public enviarArchivo(files: FileList) {
+    this.file = files.item(0);
+    this.subirArchivo()
+  }
+
+  public subirArchivo() {
+    this.completed = false;
+    const filePath = 'Justificante' + Date.now() + '.pdf';
+    const task = this.storage.upload(filePath, this.file);
+
+    task.snapshotChanges().pipe(
+      finalize(() => {
+        this.completed = true;
+
+        const ref = this.storage.ref(filePath);
+        task.snapshotChanges().pipe(finalize(()=> this.urlArchivo = ref.getDownloadURL())).subscribe();
+        this.subido = true;
+      })
+    )
+    .subscribe();
+  }
+
+  public obtenerUrlArchivo(){
+    this.urlArchivo.subscribe(url => {
+      this.urlArchivoFinal = url
+      this.redactarMail(this.urlArchivoFinal)
+    })
+      
   }
 
   //Para el Profesor

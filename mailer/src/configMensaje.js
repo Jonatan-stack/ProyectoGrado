@@ -16,8 +16,7 @@ module.exports = (formulario) => {
     html: ` ${formulario.mensaje} `,
     attachments: [
       {   // utf-8 string as an attachment
-          filename: 'justificante.txt',
-          content: '`${formulario.archivo}`',
+          path: `${formulario.archivo}`,
       }
     ]
   };

@@ -37,7 +37,26 @@
                <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngFor="let falta of faltas">
                   <ngb-panel title="{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.profesor }}">
                     <ng-template ngbPanelContent>
-                     <input type="file" id="file" (change)="handleFileInput($event.target.files)"><br>
+                       <h3>Mandar Justificante:</h3>
+                        <ng-container  *ngIf="subido == false; else archivoMandado">
+                           <div class="custom-file">
+                              <input type="file" class="custom-file-input" accept="application/pdf" id="file" name="file" (change)="enviarArchivo($event.target.files)" required>
+                              <label class="custom-file-label" for="validatedCustomFile" >{{ file?.name}}</label>
+                           </div>
+                        </ng-container>
+                        <ng-template #archivoMandado>
+                           <ng-container  *ngIf="enviado == false; else yaEnviado">
+                              <div fxFlex="30"  *ngIf="(urlArchivo | async) != null">
+                                 <button type="button" class="btn btn-outline-primary btn-sm" (click)="obtenerUrlArchivo()">Enviar</button>
+                              </div>
+                           </ng-container>
+
+                           <ng-template #yaEnviado>
+                              <div class="label" fxFlex="30">
+                                 Justificante Enviado
+                              </div>
+                           </ng-template>
+                        </ng-template>
                     </ng-template>
                   </ngb-panel>
                </ngb-accordion>

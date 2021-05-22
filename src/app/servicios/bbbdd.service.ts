@@ -1,7 +1,7 @@
 import { Injectable, Query } from '@angular/core';
 
 import { Observable} from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -11,6 +11,7 @@ import  firebase  from 'firebase/app';
 import { Clase } from '../models/clase.interface';
 import { Usuario } from '../models/usuario.interface';
 import { Falta } from '../models/falta.interface';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,9 +31,12 @@ export class BbbddService {
   private faltaDoc: AngularFirestoreDocument<Falta>;
   private faltas: Observable<Falta[]>;
 
+  public urlArchivo: Observable<string>;
+
   constructor(public angularAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
   }
 
+  //Registro y Logeo de usuarios
   async register(email: string, password: string){
     try {
       const { user } = await this.angularAuth.createUserWithEmailAndPassword(
@@ -70,6 +74,8 @@ export class BbbddService {
     const uid = firebase.auth().currentUser.uid;
     return uid;
   }
+
+  //Metodos de administracion de la base de datos
 
   //No actualiza los datos del firebase.User perse, si no la base de datos FireStore
   public updateUserData(usuario: Usuario) {
@@ -239,5 +245,4 @@ export class BbbddService {
         })
       }))
   }
-
 }
