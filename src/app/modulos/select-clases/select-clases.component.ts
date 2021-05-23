@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
-import firebase from 'firebase/app';
-//import 'firebase/<PACKAGE>';
+import * as firebase from 'firebase';
+
 
 @Component({
   selector: 'app-select-clases',
@@ -26,7 +26,7 @@ export class SelectClasesComponent implements OnInit {
   constructor(private bbdd: BbbddService, private router: Router) { }
 
   async ngOnInit(){
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.default.auth().onAuthStateChanged((user) => {
       if (user) {
         this.user$.subscribe(a =>{
           this.uid = a.uid;

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable} from 'rxjs';
 
 import { Router } from '@angular/router';
 
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-registro',
@@ -14,14 +15,16 @@ import { Usuario } from '../../models/usuario.interface';
 })
 export class RegistroComponent implements OnInit {
 
+  private isEmail = /\S+@\S+\.\S+/;
+  
   registerForm = new FormGroup({
-    nombre: new FormControl(''),
-    apellidos: new FormControl(''),
+    nombre: new FormControl('', [Validators.required]),
+    apellidos: new FormControl('', [Validators.required]),
     telefono: new FormControl(''),
-    dni: new FormControl(''),
-    rolSelect: new FormControl(''),
-    email: new FormControl(''),
-    password: new FormControl(''),
+    dni: new FormControl('', [Validators.required]),
+    rolSelect: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.pattern(this.isEmail)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
   });
 
   public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
@@ -29,48 +32,52 @@ export class RegistroComponent implements OnInit {
   constructor(private router: Router, private bbdd: BbbddService) { }
 
   ngOnInit(): void {
-    this.user$.subscribe(a =>{
-      if(this.user$){
-        this.bbdd.getRol(a.uid).subscribe((usuario: Usuario) => {
-          let rol = usuario.role
-          this.redirecUser(rol)
-        })
+    firebase.default.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.user$.subscribe(a =>{
+          this.redirigir();
+        });
       }
     });
   }
 
   async onRegister() {
-    const { email, password } = this.registerForm.value;
-    try {
-      const user = await this.bbdd.register(email, password);
-      if (user) {
-        const { nombre, apellidos, rolSelect, dni, telefono } = this.registerForm.value;
-        const usuario: Usuario = {
-          email: user.email,
-          displayName: nombre + ' ' + apellidos,
-          dni: dni,
-          telefono: telefono,
-          role: rolSelect,
-          uid: user.uid
-        };
-        this.bbdd.updateUserData(usuario)
-        this.redirecUser(rolSelect);
+    if(this.registerForm.valid){
+      const { nombre, apellidos, rolSelect, dni, telefono, email, password } = this.registerForm.value;
+      try {
+        const user = await this.bbdd.register(email, password);
+        if (user) {
+          const usuario: Usuario = {
+            email: user.email,
+            displayName: nombre + ' ' + apellidos,
+            dni: dni,
+            telefono: telefono,
+            role: rolSelect,
+            uid: user.uid
+          };
+          this.bbdd.updateUserData(usuario)
+          this.redirecUser();
+        }
+      } catch (error){
       }
-    } catch (error) {
-      console.log(error);
+    }
+    else{
+      console.log('asd')
     }
   }
 
-  private redirecUser(rol: String) {
-    if (rol == 'Alumno') {
-      this.router.navigate(['/selectClases']);
-    } 
-    else if (rol == 'Profesor'){
-      this.router.navigate(['/selectClases']);
-    }
-    else {
-      this.router.navigate(['/home']);
-    }
+
+  private redirigir(){
+    this.router.navigate(['/home']);
   }
 
+  private redirecUser() {
+    this.router.navigate(['/selectClases']);
+  }
+
+  isValidField(field: string): string {
+    const validatedField = this.registerForm.get(field);
+    return (!validatedField.valid && validatedField.touched)
+      ? 'is-invalid' : validatedField.touched ? 'is-valid' : '';
+  }
 }

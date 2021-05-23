@@ -1,30 +1,36 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <a class="navbar-brand" routerLink="/inicio">PFC</a>
+<nav class="navbar navbar-expand-md navbar-light bg-light justify-content-between">
+  <a class="navbar-brand" routerLink="/home">PFC</a>
 
   <button class="navbar-toggler navbar-toggler-right" type="button" aria-controls="appNavigation" aria-expanded="!isCollapsed" aria-label="Toggle navigation" (click)="toggleMenu()">
   <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
-      <div class="navbar-nav mr-auto">
+      <div class="container-fluid">
         <ng-container  *ngIf="user$ | async as user; else login">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+          <div class="navbar-nav">
+          </div>
+          <ul class="navbar-nav d-flex">
+            <li class="nav-item">
               <a class="nav-link" routerLink="/home">Home</a>
             </li>
-            <li class="nav-item active">
-              <a class="nav-link" routerLink="/selectClases">Seleccion de Clases</a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link" routerLink="/listaAlumnos">Lista de alumnos</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav mx-auto">
-            <li class="nav-item" *ngIf="user">
-              <a href="#" class="nav-link" (click)="onLogout()">Logout</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"> {{ user?.email }}</a>
+            <li class="nav-item" ngbDropdown>
+              <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown1" role="button">
+                {{ user?.email }}
+              </a>
+              <ng-container *ngIf="rol != 'Alumno'; else alumnoMenu">
+                <div ngbDropdownMenu aria-labelledby="navbarDropdown1" class="dropdown-menu" *ngIf="user">
+                  <a ngbDropdownItem href="#" routerLink="/listaAlumnos">Lista de alumnos</a>
+                  <a ngbDropdownItem href="#" routerLink="/selectClases">Seleccion de Clases</a>
+                  <a ngbDropdownItem href="#" (click)="onLogout()">Logout</a>
+                </div>
+              </ng-container>
+              <ng-template #alumnoMenu>
+                <div ngbDropdownMenu aria-labelledby="navbarDropdown1" class="dropdown-menu" *ngIf="user">
+                  <a ngbDropdownItem href="#" routerLink="/selectClases">Seleccion de Clases</a>
+                  <a ngbDropdownItem href="#" (click)="onLogout()">Logout</a>
+                </div>
+              </ng-template>
             </li>
           </ul>
         </ng-container>
@@ -40,6 +46,4 @@
           </ng-template>
       </div>
   </div>
-</nav>
-
-  
+</nav>  

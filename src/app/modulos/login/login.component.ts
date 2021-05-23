@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable} from 'rxjs';
 
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { Usuario } from '../../models/usuario.interface';
 
-import firebase from 'firebase/app';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +16,11 @@ import firebase from 'firebase/app';
 })
 export class LoginComponent implements OnInit {
   
+  private isEmail = /\S+@\S+\.\S+/;
+
   loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl(''),
+    email: new FormControl('', [Validators.required, Validators.pattern(this.isEmail)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
   });
 
   public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
@@ -26,9 +28,11 @@ export class LoginComponent implements OnInit {
   constructor(private bbdd: BbbddService, private router: Router) { }
   
   async ngOnInit() {
-    this.user$.subscribe(a =>{
-      if(a.uid != null){
-        this.redirecUser()
+    firebase.default.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.user$.subscribe(a =>{
+          this.redirigir();
+        });
       }
     });
   }
@@ -38,15 +42,21 @@ export class LoginComponent implements OnInit {
     try {
       let user = await this.bbdd.login(email, password);
       if(user){
-        this.redirecUser()
+        this.redirigir()
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  private redirecUser() {
+  private redirigir() {
     this.router.navigate(['/home']);
+  }
+
+  isValidField(field: string): string {
+    const validatedField = this.loginForm.get(field);
+    return (!validatedField.valid && validatedField.touched)
+      ? 'is-invalid' : validatedField.touched ? 'is-valid' : '';
   }
   
 }

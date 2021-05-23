@@ -11,6 +11,9 @@ import  firebase  from 'firebase/app';
 import { Clase } from '../models/clase.interface';
 import { Usuario } from '../models/usuario.interface';
 import { Falta } from '../models/falta.interface';
+import Swal from 'sweetalert2';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +48,12 @@ export class BbbddService {
       );
       return user;
     } catch (error) {
-      console.log(error);
+     if(error.code == 'auth/email-already-in-use'){
+        Swal.fire({
+          icon: 'error',
+          title: 'Correo ya en uso'
+        })
+      }
     }
   }
 
@@ -57,8 +65,12 @@ export class BbbddService {
       );
       return user;
     } catch (error) {
-      alert('Contrasenya o Email invalidos')
-      console.log(error);
+      if(error.code == 'auth/wrong-password'){
+        Swal.fire('Contrasenya Erronea')
+      }
+      if(error.code == 'auth/user-not-found'){
+        Swal.fire('Credenciales Erroneas')
+      }
     }
   }
 
@@ -213,7 +225,8 @@ export class BbbddService {
       profesorUID: falta.profesorUID,
       asignatura: falta.asignatura,
       fecha: falta.fecha,
-      mailProfesor: falta.mailProfesor
+      mailProfesor: falta.mailProfesor,
+      justificada: false
     }
 
     faltaRef.set(faltaData);
@@ -222,6 +235,14 @@ export class BbbddService {
   public eliminarFalta(id: string){
     this.faltaDoc = this.afs.doc<Falta>(`Faltas/${id}`);
     this.faltaDoc.delete();
+  }
+
+  public justificarFalta(uid: string){
+    const faltaRef: AngularFirestoreDocument = this.afs.doc(`Faltas/${uid}`);
+    const data = {
+      justificada: true
+    }
+    faltaRef.set(data, { merge: true });
   }
 
   public getUsuariosFaltas(alumnoUID: string){

@@ -7,50 +7,88 @@
                     <div class="row">
                         <div class="form-group col">
                             <label for="nombre">Nombre</label>
-                            <input type="text" class="form-control" formControlName="nombre" />
+                            <input type="text" class="form-control" formControlName="nombre" [class]="isValidField('nombre')"/>
+                            <div class="invalid-feedback">
+                                <span *ngIf="registerForm.get('nombre').errors?.required">
+                                    Nombre Requerido.
+                                </span>
+                            </div>
                         </div>
                         <div class="form-group col">
                             <label for="apellidos">Apellidos</label>
-                            <input type="text" class="form-control" formControlName="apellidos" />
+                            <input type="text" class="form-control" formControlName="apellidos" [class]="isValidField('apellidos')"/>
+                            <div class="invalid-feedback">
+                                <span *ngIf="registerForm.get('apellidos').errors?.required">
+                                    Apellidos Requerido.
+                                </span>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="row">
                         <div class="form-group col">
                             <label for="telefono">Telefono</label>
-                            <input type="tel" class="form-control" formControlName="telefono" />
+                            <input type="number" class="form-control" formControlName="telefono" />
                         </div>
                         <div class="form-group col">
                             <label for="dni">DNI</label>
-                            <input type="text" class="form-control" formControlName="dni" />
+                            <input type="text" class="form-control" formControlName="dni" [class]="isValidField('dni')"/>
+                            <div class="invalid-feedback">
+                                <span *ngIf="registerForm.get('dni').errors?.required">
+                                    DNI Requerido.
+                                </span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="rolSelect">Seleccione Rol</label>
-                        <select class="form-control" id="rolSelect" formControlName="rolSelect">
+                        <select class="form-control" id="rolSelect" formControlName="rolSelect" [class]="isValidField('rolSelect')">
                           <option>Alumno</option>
                           <option>Profesor</option>
                         </select>
+                        <div class="invalid-feedback">
+                            <span *ngIf="registerForm.get('rolSelect').errors?.required">
+                                Rol Requerido.
+                            </span>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" formControlName="email" placeholder="name@example.com" />
+                        <input type="email" class="form-control" formControlName="email" placeholder="name@example.com" [class]="isValidField('email')"/>
+                        <div class="invalid-feedback">
+                            <span *ngIf="registerForm.get('email').errors?.required">
+                                Email Requerido.
+                            </span>
+                            <span *ngIf="registerForm.get('email').errors?.pattern">
+                                Enter a valid email.
+                            </span>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="password">Contrasenya</label>
-                        <input
-                        type="password"
-                        class="form-control"
-                        formControlName="password"
-                        />
+                        <input type="password" class="form-control" formControlName="password" [class]="isValidField('password')"/>
+                        <div class="invalid-feedback">
+                            <span *ngIf="registerForm.get('password').errors?.required">
+                                Contrasenya Requerido.
+                            </span>
+                            <span *ngIf="registerForm.get('password').errors?.minlength">
+                                Minimo 6 caracteres.
+                            </span>
+                        </div>
                     </div>
-
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">
-                        Registrar
-                    </button>
+                    <ng-container *ngIf = "!registerForm.valid; else valido">
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-secondary" [disabled] = "true">
+                            Registrar
+                        </button>
+                    </ng-container>
+                    <ng-template #valido>
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-success" [disabled] = "false">
+                            Registrar
+                        </button>
+                    </ng-template>
                 </form>
 
                 <div class="form-group mt-3">

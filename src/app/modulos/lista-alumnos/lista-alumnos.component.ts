@@ -10,7 +10,7 @@ import { Usuario } from '../../models/usuario.interface';
 import { Mail } from '../../models/mail.interface';
 import { Falta } from '../../models/falta.interface';
 
-import firebase from 'firebase/app';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-lista-alumnos',
@@ -37,7 +37,7 @@ export class ListaAlumnosComponent implements OnInit {
   constructor(private bbdd: BbbddService, private mailer: MailerService, private router: Router) { }
 
   async ngOnInit() {
-    firebase.auth().onAuthStateChanged((user) =>{
+    firebase.default.auth().onAuthStateChanged((user) =>{
       if (user) {
         this.user$.subscribe(a =>{
           this.obtenerProfesor(a.uid);

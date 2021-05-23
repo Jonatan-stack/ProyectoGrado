@@ -8,18 +8,25 @@ module.exports = (formulario) => {
       pass: 'pqbbidoiemeikvhn' // Cambialo por tu password
     }
   });
-
   const mailOptions = {
-    from: ` ${formulario.from} `,
-    to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
-    subject: ` ${formulario.asunto}  de  ${formulario.from} `,
-    html: ` ${formulario.mensaje} `,
-    attachments: [
-      {   // utf-8 string as an attachment
-          path: `${formulario.archivo}`,
-      }
-    ]
-  };
+      from: ` ${formulario.from} `,
+      to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
+      subject: ` ${formulario.asunto}  de  ${formulario.from} `,
+      html: ` ${formulario.mensaje} `,
+    }
+    
+  /*const mailOptions = {
+      from: ` ${formulario.from} `,
+      to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
+      subject: ` ${formulario.asunto}  de  ${formulario.from} `,
+      html: ` ${formulario.mensaje} `,
+      attachments: [
+        {   // utf-8 string as an attachment
+            path: `${formulario.archivo}`,
+        }
+      ]
+    }; */
+
   transporter.sendMail(mailOptions, function (err, info) {
     if (err)
       console.log(err)

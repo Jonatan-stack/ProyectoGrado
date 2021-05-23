@@ -41,8 +41,7 @@ export class HomeComponent implements OnInit {
   public urlArchivoFinal: string;
   public completed = false;
   public file: File;
-  public subido = false;
-  public enviado = false;
+  public subido = true;
 
 
   constructor(private bbdd: BbbddService, private mailer: MailerService, private storage: AngularFireStorage) {
@@ -107,19 +106,20 @@ export class HomeComponent implements OnInit {
    }
   }
 
-  public redactarMail(url: string){
+  public redactarMail(idFalta: string, mailProfesor: string){
 
     const mail: Mail = {
       from: this.usuario.displayName,                   
-      emailDestinatario: 'jonatanaocv@gmail.com',   
+      emailDestinatario: 'jonatanaocv@gmail.com',   //cambiarlo por el mail del profesor que ha puesto la falta {{mailProfesor}}
       asunto: 'Justificante',                
       mensaje: 'Justificante ',
       archivo: this.urlArchivoFinal
     };
 
     this.mailer.sendMessage(mail).subscribe(() => {
-      //swal("Formulario de contacto", "Mensaje enviado correctamente", 'success');
-      this.enviado = true;
+      this.bbdd.justificarFalta(idFalta);
+      this.subido = true;
+      this.file = null;
     });
   }
 
@@ -141,16 +141,16 @@ export class HomeComponent implements OnInit {
 
         const ref = this.storage.ref(filePath);
         task.snapshotChanges().pipe(finalize(()=> this.urlArchivo = ref.getDownloadURL())).subscribe();
-        this.subido = true;
+        this.subido = false;
       })
     )
     .subscribe();
   }
 
-  public obtenerUrlArchivo(){
+  public obtenerUrlArchivo(idFalta: string, mailProfesor: string){
     this.urlArchivo.subscribe(url => {
       this.urlArchivoFinal = url
-      this.redactarMail(this.urlArchivoFinal)
+      this.redactarMail(idFalta, mailProfesor)
     })
       
   }

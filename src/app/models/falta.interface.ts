@@ -7,4 +7,5 @@ export interface Falta{
     asignatura: string;
     fecha: string;
     mailProfesor: string;
+    justificada?: boolean;
 }
