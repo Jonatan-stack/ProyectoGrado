@@ -106,6 +106,8 @@ export class HomeComponent implements OnInit {
    }
   }
 
+  //Para subir archivos y enviarlo por correo
+
   public redactarMail(idFalta: string, mailProfesor: string){
 
     const mail: Mail = {
@@ -122,8 +124,6 @@ export class HomeComponent implements OnInit {
       this.file = null;
     });
   }
-
-  //Para subir archivos y enviarlo por correo
 
   public enviarArchivo(files: FileList) {
     this.file = files.item(0);

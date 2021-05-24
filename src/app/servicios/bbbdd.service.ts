@@ -11,9 +11,8 @@ import  firebase  from 'firebase/app';
 import { Clase } from '../models/clase.interface';
 import { Usuario } from '../models/usuario.interface';
 import { Falta } from '../models/falta.interface';
+
 import Swal from 'sweetalert2';
-
-
 
 @Injectable({
   providedIn: 'root'
