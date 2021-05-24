@@ -70,7 +70,20 @@ export class ListaAlumnosComponent implements OnInit {
   public obtenerUsuarioAsignatura(){
     this.bbdd.getUsuarios().subscribe(usuarios => {
       this.alumnos = usuarios;
+      this.ordenarAlumnos();
     })
+  }
+
+  public ordenarAlumnos(){
+    this.alumnos.sort(function (a, b) {
+      if (a.displayName > b.displayName) {
+        return -1;
+      }
+      if (a.displayName < b.displayName) {
+        return 1;
+      }
+      return 0;
+    });
   }
 
   public ponerFalta(alumno: Usuario){

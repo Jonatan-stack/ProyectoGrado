@@ -84,29 +84,62 @@
                   <div class="card-header">
                      <h5 class="card-header-text">Faltas</h5>
                   </div>
-                  <p>Has puesto un total de: {{ profesorFaltasTotal }} faltas</p>
 
                   <div class="card-block">
-                     <table class="table table-striped ">
-                        <thead>
-                           <tr class="text-center">
-                              <th scope="col">Fecha</th>
-                              <th scope="col">Asignatura</th>
-                              <th scope="col">Alumno</th>
-                              <th scope="col"></th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           <tr class="text-center" *ngFor="let falta of profesorFaltas">
-                              <ng-container>
-                                 <td>{{ falta.fecha }}</td>
-                                 <td>{{ falta.asignatura }}</td>
-                                 <td>{{ falta.alumno }}</td>
-                                 <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta.id)">Eliminar</button></td>
-                              </ng-container>
-                           </tr>
-                        </tbody>
-                     </table>
+                     <ul ngbNav #nav="ngbNav" class="nav-tabs">
+                        <li ngbNavItem>
+                          <a ngbNavLink>Sin Justificar</a>
+                          <ng-template ngbNavContent>
+                              <table class="table table-striped ">
+                                 <thead>
+                                    <tr class="text-center">
+                                       <th scope="col">Fecha</th>
+                                       <th scope="col">Asignatura</th>
+                                       <th scope="col">Alumno</th>
+                                       <th scope="col"></th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr class="text-center" *ngFor="let falta of profesorFaltas">
+                                       <ng-container *ngIf="falta.justificada == false">
+                                          <td>{{ falta.fecha }}</td>
+                                          <td>{{ falta.asignatura }}</td>
+                                          <td>{{ falta.alumno }}</td>
+                                          <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta.id)">Borrar</button></td>
+                                       </ng-container>
+                                    </tr>
+                                 </tbody>
+                              </table>
+                          </ng-template>
+                        </li>
+                        <li ngbNavItem>
+                          <a ngbNavLink>Justificadas</a>
+                          <ng-template ngbNavContent>
+                           <table class="table table-striped ">
+                              <thead>
+                                 <tr class="text-center">
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col">Asignatura</th>
+                                    <th scope="col">Alumno</th>
+                                    <th scope="col"></th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 <tr class="text-center" *ngFor="let falta of profesorFaltas">
+                                    <ng-container *ngIf="falta.justificada == true">
+                                       <td>{{ falta.fecha }}</td>
+                                       <td>{{ falta.asignatura }}</td>
+                                       <td>{{ falta.alumno }}</td>
+                                       <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta.id)">Borrar</button></td>
+                                    </ng-container>
+                                 </tr>
+                              </tbody>
+                           </table>
+                          </ng-template>
+                        </li>
+                      </ul>
+                      
+                      <div [ngbNavOutlet]="nav" class="mt-2"></div>
                   </div>
 
                </div>

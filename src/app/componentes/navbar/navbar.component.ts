@@ -27,7 +27,6 @@ export class NavbarComponent implements OnInit {
         this.user$.subscribe(a =>{
           this.bbdd.getOneUser(a.uid).subscribe(usuario =>{
             this.rol = usuario.role;
-            console.log(this.rol)
           })
         });
       }
