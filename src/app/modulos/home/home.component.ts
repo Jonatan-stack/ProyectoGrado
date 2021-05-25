@@ -2,14 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { Observable} from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+import { Router } from '@angular/router';
+
 import { BbbddService } from '../../servicios/bbbdd.service';
 import { MailerService } from '../../servicios/mailer.service';
 import { AngularFireStorage } from '@angular/fire/storage';
+import * as firebase from 'firebase';
 
 import { Usuario } from '../../models/usuario.interface';
 import { Falta } from '../../models/falta.interface';
 import { Clase } from '../../models/clase.interface';
 import { Mail } from '../../models/mail.interface';
+
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +22,13 @@ import { Mail } from '../../models/mail.interface';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-outline-success sm ',
+      cancelButton: ' btn btn-outline-danger sm'
+    },
+    buttonsStyling: false
+  })
 
   public user$: Observable<Usuario> = this.bbdd.angularAuth.user;
   public uid;
@@ -44,20 +56,25 @@ export class HomeComponent implements OnInit {
   public subido = true;
 
 
-  constructor(private bbdd: BbbddService, private mailer: MailerService, private storage: AngularFireStorage) {
+  constructor(private bbdd: BbbddService, private mailer: MailerService, private storage: AngularFireStorage, private router: Router) {
   }
 
   ngOnInit(): void {
-    this.user$.subscribe(a =>{
-      if(this.user$){
-        this.uid = a.uid;
-        this.obtenerUsuario(this.uid);
-        this.guardarFaltas();
-
-          this.guardarUsuarios();
-          this.guardarCursos();
-
-          this.guardarFaltasProfesor();
+    firebase.default.auth().onAuthStateChanged((user) =>{
+      if (user) {
+        this.user$.subscribe(a =>{
+          this.uid = a.uid;
+          this.obtenerUsuario(this.uid);
+          this.guardarFaltas();
+  
+            this.guardarUsuarios();
+            this.guardarCursos();
+  
+            this.guardarFaltasProfesor();
+        });
+      } 
+      else {
+        this.redirigir();
       }
     });
   }
@@ -108,18 +125,19 @@ export class HomeComponent implements OnInit {
 
   //Para subir archivos y enviarlo por correo
 
-  public redactarMail(idFalta: string, mailProfesor: string){
+  public redactarMail(falta: Falta, mailProfesor: string){
 
     const mail: Mail = {
       from: this.usuario.displayName,                   
-      emailDestinatario: 'jonatanaocv@gmail.com',   //cambiarlo por el mail del profesor que ha puesto la falta {{mailProfesor}}
+      emailDestinatario: mailProfesor,
       asunto: 'Justificante',                
-      mensaje: 'Justificante ',
-      archivo: this.urlArchivoFinal
+      mensaje: 'Justificante de ' + falta.alumno + ' para la asignatura de ' + falta.asignatura + ' de la fecha ' + falta.fecha,
+      archivo: this.urlArchivoFinal,
+      tieneArchivo: 'S'
     };
 
     this.mailer.sendMessage(mail).subscribe(() => {
-      this.bbdd.justificarFalta(idFalta);
+      this.bbdd.justificarFalta(falta.id);
       this.subido = true;
       this.file = null;
     });
@@ -147,10 +165,10 @@ export class HomeComponent implements OnInit {
     .subscribe();
   }
 
-  public obtenerUrlArchivo(idFalta: string, mailProfesor: string){
+  public obtenerUrlArchivo(falta: Falta, mailProfesor: string){
     this.urlArchivo.subscribe(url => {
       this.urlArchivoFinal = url
-      this.redactarMail(idFalta, mailProfesor)
+      this.redactarMail(falta, mailProfesor)
     })
       
   }
@@ -165,8 +183,32 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  public eliminarFalta(id: string){
-    this.bbdd.eliminarFalta(id);
+  public eliminarFalta(falta: Falta){
+    if(falta.justificada == false){
+      this.swalWithBootstrapButtons.fire({
+        title: 'Falta sin Justificar',
+        text: 'Eliminar?',
+        showCancelButton: true,
+        confirmButtonText: 'Si, claro',
+        cancelButtonText: 'No',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.swalWithBootstrapButtons.fire(
+            'Listo'
+          )
+          this.bbdd.eliminarFalta(falta.id);
+  
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          this.swalWithBootstrapButtons.fire(
+            'Cancelado'
+          )
+        }
+      })
+    }
+    else{
+      this.bbdd.eliminarFalta(falta.id);
+    }
   }
   
   //Para el admin
@@ -246,6 +288,10 @@ export class HomeComponent implements OnInit {
 
   onChangeClase(deviceValue) {
     this.selectClase = deviceValue;
+  }
+
+  public redirigir(){
+    this.router.navigate(['/login']);
   }
 
 }

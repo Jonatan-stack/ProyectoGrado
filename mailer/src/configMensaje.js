@@ -4,18 +4,25 @@ module.exports = (formulario) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'emailparapfc@gmail.com', // Cambialo por tu email
-      pass: 'pqbbidoiemeikvhn' // Cambialo por tu password
+      user: 'emailparapfc@gmail.com',
+      pass: 'pqbbidoiemeikvhn'
     }
   });
-  const mailOptions = {
-      from: ` ${formulario.from} `,
-      to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
-      subject: ` ${formulario.asunto}  de  ${formulario.from} `,
-      html: ` ${formulario.mensaje} `,
-    }
-    
-  /*const mailOptions = {
+
+  var mailOptions = comprobarArchivo(formulario);
+
+  transporter.sendMail(mailOptions, function (err, info) {
+    if (err)
+      console.log(err)
+    else
+      console.log(info);
+  });
+}
+
+function comprobarArchivo(formulario){
+  var mailOptions;
+  if(formulario.tieneArchivo == 'S'){
+    mailOptions = {
       from: ` ${formulario.from} `,
       to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
       subject: ` ${formulario.asunto}  de  ${formulario.from} `,
@@ -25,12 +32,15 @@ module.exports = (formulario) => {
             path: `${formulario.archivo}`,
         }
       ]
-    }; */
-
-  transporter.sendMail(mailOptions, function (err, info) {
-    if (err)
-      console.log(err)
-    else
-      console.log(info);
-  });
+    }
+  }
+  else{
+    mailOptions = {
+      from: ` ${formulario.from} `,
+      to: ` ${formulario.emailDestinatario} `, // Cambia esta parte por el destinatario
+      subject: ` ${formulario.asunto}  de  ${formulario.from} `,
+      html: ` ${formulario.mensaje} `
+    }
+  }
+  return mailOptions;
 }

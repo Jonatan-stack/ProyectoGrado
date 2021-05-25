@@ -9,7 +9,6 @@ import { MailerService } from '../../servicios/mailer.service';
 import { Usuario } from '../../models/usuario.interface';
 import { Mail } from '../../models/mail.interface';
 import { Falta } from '../../models/falta.interface';
-
 import * as firebase from 'firebase';
 
 @Component({
@@ -62,7 +61,6 @@ export class ListaAlumnosComponent implements OnInit {
         this.filterCurso = this.cursosProfesor[0];
         //hace que el filtro empiece siempre por la primera asignatura del profesor
         this.filterAsignatura = this.asignaturasProfesor[0];
-        this.selectClase = this.asignaturasProfesor[0];
       }
     });
   }
@@ -89,16 +87,24 @@ export class ListaAlumnosComponent implements OnInit {
   public ponerFalta(alumno: Usuario){
     let f = new Date;
     let min = f.getMinutes();
-    let minS = '';
-    if(min <= 0){
-      minS = '';
-      minS = 0 + '' + min
-    }
-    
-    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + min;
+    let minS =  this.fechaCorrecta(min);
+
+    let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + minS;
 
     this.redactarMail(alumno, fecha);
     this.setFalta(alumno, fecha);
+  }
+
+  private fechaCorrecta(min: number){
+    var minS;
+    if(min < 10){
+      minS = '';
+      minS = 0 + '' + min
+      return minS;
+    }
+    else{
+      return min;
+    }
   }
 
   public redactarMail(alumno: Usuario, fecha: string){
@@ -107,6 +113,7 @@ export class ListaAlumnosComponent implements OnInit {
       emailDestinatario: alumno.email,   
       asunto: 'Falta',                
       mensaje: 'Has faltado a ' + this.selectClase + ' del curso ' + this.selectCurso + ' en la fecha ' + fecha,
+      tieneArchivo: 'N'
     };
 
     this.mailer.sendMessage(mail).subscribe(() => {

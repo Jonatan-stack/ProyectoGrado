@@ -7,11 +7,13 @@
                 <h5 class="card-header-text">{{ usuario?.role }}</h5>
              </div>
              <div class="card-block">
-                <p>Nombre: {{ usuario?.displayName }}</p>
-                <p>Telefono: {{ usuario?.telefono }}</p>
-                <p>DNI: {{ usuario?.dni }}</p>
-                <p>Email: {{ usuario?.email }}</p>
-                <p>UID: {{ usuario?.uid }}</p>
+                <div class="interior">
+                  <p><b>Nombre:</b> {{ usuario?.displayName }}</p>
+                  <p><b>Telefono:</b> {{ usuario?.telefono }}</p>
+                  <p><b>DNI:</b> {{ usuario?.dni }}</p>
+                  <p><b>Email:</b> {{ usuario?.email }}</p>
+                  <p><b>UID:</b> {{ usuario?.uid }}</p>
+                </div>
              </div>
           </div>
         </div>
@@ -21,9 +23,11 @@
                <div class="card-header">
                   <h5 class="card-header-text">Estadisticas</h5>
                </div>
-               <p>Horas faltadas a las asignaturas: </p>
-               <div class="card-block" *ngFor="let asignatura of usuario?.asignaturas; let i = index;">
-                  <p>{{ asignatura}}: {{stadisticas[i]}} horas</p>
+               <h6>Horas faltadas a las asignaturas: </h6>
+               <div class="interior">
+                  <div class="card-block" *ngFor="let asignatura of usuario?.asignaturas; let i = index;">
+                     <p>{{ asignatura}}: <b>{{stadisticas[i]}}</b> horas</p>
+                  </div>
                </div>
             </div>
          </div>
@@ -43,7 +47,7 @@
                            <div class="custom-file">
                               <input type="file" class="custom-file-input" accept="application/pdf" id="file" name="file" (change)="enviarArchivo($event.target.files)" required>
                               <label class="custom-file-label" for="validatedCustomFile" >{{ file?.name }}</label>
-                              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="subido" (click)="obtenerUrlArchivo(falta.id, falta.mailProfesor)">Enviar</button>
+                              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="subido" (click)="obtenerUrlArchivo(falta, falta.mailProfesor)">Enviar</button>
                            </div>
                        </ng-container>
                        <ng-template #justificada>
@@ -69,11 +73,13 @@
                  <h5 class="card-header-text">{{ usuario?.role }}</h5>
               </div>
               <div class="card-block">
-                 <p>Nombre: {{ usuario?.displayName }}</p>
-                 <p>Telefono: {{ usuario?.telefono }}</p>
-                 <p>DNI: {{ usuario?.dni }}</p>
-                 <p>Email: {{ usuario?.email }}</p>
-                 <p>UID: {{ usuario?.uid }}</p>
+                  <div class="interior">
+                     <p><b>Nombre:</b> {{ usuario?.displayName }}</p>
+                     <p><b>Telefono:</b> {{ usuario?.telefono }}</p>
+                     <p><b>DNI:</b> {{ usuario?.dni }}</p>
+                     <p><b>Email:</b> {{ usuario?.email }}</p>
+                     <p><b>UID:</b> {{ usuario?.uid }}</p>
+                  </div>
               </div>
            </div>
          </div>
@@ -105,7 +111,7 @@
                                           <td>{{ falta.fecha }}</td>
                                           <td>{{ falta.asignatura }}</td>
                                           <td>{{ falta.alumno }}</td>
-                                          <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta.id)">Borrar</button></td>
+                                          <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta)">Borrar</button></td>
                                        </ng-container>
                                     </tr>
                                  </tbody>
@@ -130,7 +136,7 @@
                                        <td>{{ falta.fecha }}</td>
                                        <td>{{ falta.asignatura }}</td>
                                        <td>{{ falta.alumno }}</td>
-                                       <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta.id)">Borrar</button></td>
+                                       <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFalta(falta)">Borrar</button></td>
                                     </ng-container>
                                  </tr>
                               </tbody>

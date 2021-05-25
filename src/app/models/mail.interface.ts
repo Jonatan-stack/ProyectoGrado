@@ -4,4 +4,5 @@ export interface Mail {
     asunto: string;                 //nombre de la asignatura
     mensaje: string;                //nombre del alumno + la fecha + el nombre de la asignatura
     archivo?: string;
+    tieneArchivo: string;
   }
