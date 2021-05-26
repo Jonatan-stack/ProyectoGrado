@@ -21,12 +21,28 @@
         <div class="col-lg-8 mx-auto mt-5">
             <div class="card scrollEstadisticas">
                <div class="card-header">
-                  <h5 class="card-header-text">Estadisticas</h5>
+                  <h5 class="card-header-text">Estadisticas </h5>
                </div>
-               <h6>Horas faltadas a las asignaturas: </h6>
                <div class="interior">
-                  <div class="card-block" *ngFor="let asignatura of usuario?.asignaturas; let i = index;">
-                     <p>{{ asignatura}}: <b>{{stadisticas[i]}}</b> horas</p>
+                  <div class="card-block">
+                     <table class="table table-striped">
+                        <thead>
+                            <tr class="text-center">
+                                <th scope="col">Asignatura</th>
+                                <th scope="col">Horas Sin Justificar</th>
+                                <th scope="col">Horas Justificadas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-center"  *ngFor="let asignatura of usuario?.asignaturas; let i = index;">
+                                <ng-container>
+                                    <td>{{ asignatura }}</td>
+                                    <td>{{ faltasSinJustificar[i] }}</td>
+                                    <td>{{ faltasJustificadas[i] }}</td>
+                                </ng-container>
+                            </tr>
+                        </tbody>
+                    </table>
                   </div>
                </div>
             </div>
@@ -35,28 +51,29 @@
          <div class="col-lg-12 mx-auto mt-5">
             <div class="card scroll">
                <div class="card-header">
-                  <h5 class="card-header-text">Asistencia</h5>
+                  <h5 class="card-header-text">Asistencia </h5>
                </div>
-               <p>Has faltado un total de: {{ totalFaltas }} horas</p>
 
                <ngb-accordion #acc="ngbAccordion" *ngFor="let falta of faltas">
-                  <ngb-panel title="{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.profesor }}">
-                    <ng-template ngbPanelContent>
-                       <ng-container *ngIf = "falta.justificada == false; else justificada">
-                           <h5>Mandar Justificante:</h5>
-                           <div class="custom-file">
-                              <input type="file" class="custom-file-input" accept="application/pdf" id="file" name="file" (change)="enviarArchivo($event.target.files)" required>
-                              <label class="custom-file-label" for="validatedCustomFile" >{{ file?.name }}</label>
-                              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="subido" (click)="obtenerUrlArchivo(falta, falta.mailProfesor)">Enviar</button>
-                           </div>
-                       </ng-container>
-                       <ng-template #justificada>
-                           <div class="label" fxFlex="30">
-                              Justificante Enviado
-                           </div>
-                       </ng-template>
-                    </ng-template>
-                  </ngb-panel>
+                  <ng-container *ngIf = "falta.eliminada == false">
+                     <ngb-panel title="{{ falta.fecha }} || {{ falta.asignatura }} || {{ falta.profesor }}">
+                     <ng-template ngbPanelContent>
+                        <ng-container *ngIf = "falta.justificada == false; else justificada">
+                              <h5>Mandar Justificante:</h5>
+                              <div class="custom-file">
+                                 <input type="file" class="custom-file-input" accept="application/pdf" id="file" name="file" (change)="enviarArchivo($event.target.files)" required>
+                                 <label class="custom-file-label" for="validatedCustomFile" >{{ file?.name }}</label>
+                                 <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="subido" (click)="obtenerUrlArchivo(falta, falta.mailProfesor)">Enviar</button>
+                              </div>
+                        </ng-container>
+                        <ng-template #justificada>
+                              <div class="label" fxFlex="30">
+                                 Justificante Enviado
+                              </div>
+                        </ng-template>
+                     </ng-template>
+                     </ngb-panel>
+                  </ng-container>
                </ngb-accordion>
 
             </div>
@@ -107,7 +124,7 @@
                                  </thead>
                                  <tbody>
                                     <tr class="text-center" *ngFor="let falta of profesorFaltas">
-                                       <ng-container *ngIf="falta.justificada == false">
+                                       <ng-container *ngIf="falta.justificada == false && falta.eliminada == false">
                                           <td>{{ falta.fecha }}</td>
                                           <td>{{ falta.asignatura }}</td>
                                           <td>{{ falta.alumno }}</td>
@@ -132,7 +149,7 @@
                               </thead>
                               <tbody>
                                  <tr class="text-center" *ngFor="let falta of profesorFaltas">
-                                    <ng-container *ngIf="falta.justificada == true">
+                                    <ng-container *ngIf="falta.justificada == true && falta.eliminada == false">
                                        <td>{{ falta.fecha }}</td>
                                        <td>{{ falta.asignatura }}</td>
                                        <td>{{ falta.alumno }}</td>
@@ -162,7 +179,7 @@
                      <li [ngbNavItem]="1">
                      <a ngbNavLink>Alumnos</a>
                      <ng-template ngbNavContent>
-                        <table class="table table-striped ">
+                        <table class="table table-hover ">
                            <thead>
                               <tr class="text-center">
                                  <th scope="col">Nombre</th>
@@ -189,7 +206,7 @@
                      <li [ngbNavItem]="2">
                      <a ngbNavLink>Profesores</a>
                      <ng-template ngbNavContent>
-                        <table class="table table-striped ">
+                        <table class="table table-hover ">
                               <thead>
                                  <tr class="text-center">
                                     <th scope="col">Nombre</th>
@@ -246,25 +263,35 @@
                      </ng-template>
                      </li>
                      <li [ngbNavItem]="4">
-                        <a ngbNavLink>Anyadir Clase/Curso</a>
+                        <a ngbNavLink>Añadir Clase/Curso</a>
                         <ng-template ngbNavContent>
 
-                           <div>
-                              <h4>Anyadir Asignatura</h4>
-                              <label class="mr-4">Nombre del Curso: </label>
-                              <input type="text" id="addCursoID" name="addCursoNombre">
-                              <button type="button" class="btn btn-primary btn-sm" (click)="anyadirClase()">Add curso</button>
-                           </div>
-                           <div>
-                              <h4>Anyadir Asignatura</h4>
-                              <label class="mr-4">Nombre de la Asignatura: </label>
-                              <input type="text" id="addAsignaturaID" name="addAsignaturaNombre">
-                              <select class="form-control" id="asignaturaSelect" [(ngModel)] = "filterAsignatura" (change)="onChangeClase($event.target.value)">
-                                 <option *ngFor="let curso of cursos">
-                                    {{curso.id}}
-                                 </option>
-                           </select>
-                              <button type="button" class="btn btn-primary btn-sm" (click)="anyadirAsignatura()">Add Asignatura</button>
+                           <div class="row">
+                              <div class="col-sm-6">
+                                 <div class="card addCursoAddAsignatura">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Añadir Curso</h5>
+                                    <label class="mr-4">Nombre del Curso: </label>
+                                    <input class="addButton" type="text" id="addCursoID" name="addCursoNombre">
+                                    <button type="button" class="btn btn-outline-success btn-sm addButton" (click)="anyadirClase()">Add curso</button>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-sm-6">
+                                 <div class="card addCursoAddAsignatura">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Añadir Asignatura</h5>
+                                    <label class="mr-4 addButton">Nombre de la Asignatura: </label>
+                                    <input type="text" id="addAsignaturaID " name="addAsignaturaNombre">
+                                    <select class="form-control addButton" id="asignaturaSelect" [(ngModel)] = "filterAsignatura" (change)="onChangeClase($event.target.value)">
+                                       <option *ngFor="let curso of cursos">
+                                          {{curso.id}}
+                                       </option>
+                                    </select>
+                                    <button type="button" class="btn btn-outline-success btn-sm addButton" (click)="anyadirAsignatura()">Add Asignatura</button>
+                                    </div>
+                                 </div>
+                              </div>
                            </div>
                         </ng-template>
                      </li>

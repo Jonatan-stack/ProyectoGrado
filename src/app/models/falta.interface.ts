@@ -8,4 +8,5 @@ export interface Falta{
     fecha: string;
     mailProfesor: string;
     justificada?: boolean;
+    eliminada?: boolean;
 }

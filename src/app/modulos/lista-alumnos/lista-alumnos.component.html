@@ -22,20 +22,20 @@
             
             <table class="table table-hover">
                 <thead>
-                <tr class="text-center">
-                    <th scope="col">Nombre</th>
-                    <th scope="col">DNI</th>
-                    <th scope="col">Falta</th>
-                </tr>
+                    <tr class="text-center">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">DNI</th>
+                        <th scope="col">Falta</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr class="text-center" *ngFor="let usuario of alumnos | filter:filterCurso | filter:filterAsignatura ">
-                    <ng-container *ngIf="(usuario.role == 'Alumno' && incluyeAmbos(usuario.asignaturas, usuario.cursos))">
-                        <td>{{usuario.displayName}}</td>
-                        <td>{{usuario.dni}}</td>
-                        <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="ponerFalta(usuario)">Falta</button></td>
-                    </ng-container>
-                </tr>
+                    <tr class="text-center" *ngFor="let usuario of alumnos | filter:filterCurso | filter:filterAsignatura ">
+                        <ng-container *ngIf="(usuario.role == 'Alumno' && incluyeAmbos(usuario.asignaturas, usuario.cursos))">
+                            <td>{{usuario.displayName}}</td>
+                            <td>{{usuario.dni}}</td>
+                            <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="ponerFalta(usuario)">Falta</button></td>
+                        </ng-container>
+                    </tr>
                 </tbody>
             </table>
         </div>

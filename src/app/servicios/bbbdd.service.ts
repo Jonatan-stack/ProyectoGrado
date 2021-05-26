@@ -225,15 +225,19 @@ export class BbbddService {
       asignatura: falta.asignatura,
       fecha: falta.fecha,
       mailProfesor: falta.mailProfesor,
-      justificada: false
+      justificada: false,
+      eliminada: false
     }
 
     faltaRef.set(faltaData);
   }
-
+  
   public eliminarFalta(id: string){
-    this.faltaDoc = this.afs.doc<Falta>(`Faltas/${id}`);
-    this.faltaDoc.delete();
+    const faltaRef: AngularFirestoreDocument = this.afs.doc(`Faltas/${id}`);
+    const data = {
+      eliminada: true
+    }
+    faltaRef.set(data, { merge: true });
   }
 
   public justificarFalta(uid: string){

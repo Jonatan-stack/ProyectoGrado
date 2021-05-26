@@ -38,7 +38,8 @@ export class HomeComponent implements OnInit {
   public faltas = [];
   public totalFaltas;
 
-  public stadisticas = [];
+  public faltasSinJustificar = [];
+  public faltasJustificadas = [];
 
   public usuarios = [];
   public cursos = [];
@@ -97,10 +98,10 @@ export class HomeComponent implements OnInit {
   public ordenarFaltas(){
     this.faltas.sort(function (a, b) {
       if (a.fecha > b.fecha) {
-        return -1;
+        return 1;
       }
       if (a.fecha < b.fecha) {
-        return 1;
+        return -1;
       }
       return 0;
     });
@@ -109,15 +110,21 @@ export class HomeComponent implements OnInit {
   public estadisticas(){
     var faltasTipo: Falta[] = this.faltas;
     let i: Falta;
-
+    //rellena el array de valores 0
     for(let j = 0; j < this.usuario.asignaturas.length; j++){
-      this.stadisticas[j] = 0
+      this.faltasSinJustificar[j] = 0;
+      this.faltasJustificadas[j] = 0;
     }
 
    for(i of faltasTipo){
       for(let j = 0; j < this.usuario.asignaturas.length; j++){
           if(i.asignatura == this.usuario.asignaturas[j]){
-            this.stadisticas[j] = this.stadisticas[j] + 1
+            if(i.justificada){
+              this.faltasJustificadas[j] = this.faltasJustificadas[j] + 1;
+            }
+            else{
+              this.faltasSinJustificar[j] = this.faltasSinJustificar[j] + 1
+            }
           }
       }
    }
@@ -226,18 +233,75 @@ export class HomeComponent implements OnInit {
   }
 
   public eliminarUsuario(uid: string){
-    this.bbdd.eliminarUsuario(uid);
+    this.swalWithBootstrapButtons.fire({
+      title: 'Vas a eliminar un usuario',
+      text: 'Segruo?',
+      showCancelButton: true,
+      confirmButtonText: 'Si, claro',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.swalWithBootstrapButtons.fire(
+          'Listo'
+        )
+        this.bbdd.eliminarUsuario(uid);
+
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.swalWithBootstrapButtons.fire(
+          'Cancelado'
+        )
+      }
+    })
   }
 
   public eliminarClase(id: string){
-    this.bbdd.eliminarClase(id);
+    this.swalWithBootstrapButtons.fire({
+      title: 'Vas a eliminar una Clase',
+      text: 'Segruo?',
+      showCancelButton: true,
+      confirmButtonText: 'Si, claro',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.swalWithBootstrapButtons.fire(
+          'Listo'
+        )
+        this.bbdd.eliminarClase(id);
+
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.swalWithBootstrapButtons.fire(
+          'Cancelado'
+        )
+      }
+    })
   }
 
   public eliminarAsignatura(clase: Clase, indice: number){
-    var asignaturasNuevas = clase.Asignaturas;
-    asignaturasNuevas.splice(indice, 1);
-    
-    this.bbdd.actualizarClase(clase.id, asignaturasNuevas);
+    this.swalWithBootstrapButtons.fire({
+      title: 'Vas a eliminar una Asignatura',
+      text: 'Segruo?',
+      showCancelButton: true,
+      confirmButtonText: 'Si, claro',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.swalWithBootstrapButtons.fire(
+          'Listo'
+        )
+        var asignaturasNuevas = clase.Asignaturas;
+        asignaturasNuevas.splice(indice, 1);
+        
+        this.bbdd.actualizarClase(clase.id, asignaturasNuevas);
+
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.swalWithBootstrapButtons.fire(
+          'Cancelado'
+        )
+      }
+    })
   }
 
   public anyadirClase(){
