@@ -6,11 +6,13 @@
                     <div class="form-group">
                         <div class="input-group">
                             <select class="form-control" id="asignaturaSelect" [(ngModel)] = "filterAsignatura" (change)="onChangeClase($event.target.value)">
+                                <option disabled selected value=""> Seleccione una asignatura </option>
                                 <option *ngFor="let asignatura of asignaturasProfesor">
                                     {{asignatura}}
                                 </option>
                             </select>
                             <select class="form-control" id="cursoSelect" [(ngModel)] = "filterCurso" (change)="onChangeCurso($event.target.value)">
+                                <option disabled selected value=""> Seleccione un curso </option>
                                 <option *ngFor="let clase of cursosProfesor">
                                     {{ clase }}
                                 </option>

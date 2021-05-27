@@ -22,7 +22,7 @@
               <input type="password" class="form-control" formControlName="password" [class]="isValidField('password')"/>
               <div class="invalid-feedback">
                 <span *ngIf="loginForm.get('password').errors?.required">
-                    Contrasenya Requerido.
+                    Contraseña Requerido.
                 </span>
                 <span *ngIf="loginForm.get('password').errors?.minlength">
                     Minimo 6 caracteres.

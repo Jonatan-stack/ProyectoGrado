@@ -1,4 +1,4 @@
-.footer {
+/*.footer {
     height: 50px;
 }
 
@@ -8,4 +8,31 @@ footer {
     color: white;
     line-height: 50px;
     padding: 0 20px;
+}*/
+
+.bd-footer {
+    font-size: .875rem;
+    color: #67727c;
+}
+
+.bg-light {
+    background-color: #a09e9e23!important;
+}
+.text-center {
+    text-align: center!important;
+}
+.p-3 {
+    padding: 1rem!important;
+}
+.mt-5 {
+    margin-top: 3rem!important;
+}
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+footer {
+    display: block;
+}
+.bd-footer-links li{
+    display: inline;
 }

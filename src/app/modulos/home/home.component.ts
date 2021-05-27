@@ -235,7 +235,7 @@ export class HomeComponent implements OnInit {
   public eliminarUsuario(uid: string){
     this.swalWithBootstrapButtons.fire({
       title: 'Vas a eliminar un usuario',
-      text: 'Segruo?',
+      text: 'Seguro?',
       showCancelButton: true,
       confirmButtonText: 'Si, claro',
       cancelButtonText: 'No',
@@ -258,7 +258,7 @@ export class HomeComponent implements OnInit {
   public eliminarClase(id: string){
     this.swalWithBootstrapButtons.fire({
       title: 'Vas a eliminar una Clase',
-      text: 'Segruo?',
+      text: 'Seguro?',
       showCancelButton: true,
       confirmButtonText: 'Si, claro',
       cancelButtonText: 'No',
@@ -281,7 +281,7 @@ export class HomeComponent implements OnInit {
   public eliminarAsignatura(clase: Clase, indice: number){
     this.swalWithBootstrapButtons.fire({
       title: 'Vas a eliminar una Asignatura',
-      text: 'Segruo?',
+      text: 'Seguro?',
       showCancelButton: true,
       confirmButtonText: 'Si, claro',
       cancelButtonText: 'No',

@@ -65,7 +65,7 @@ export class BbbddService {
       return user;
     } catch (error) {
       if(error.code == 'auth/wrong-password'){
-        Swal.fire('Contrasenya Erronea')
+        Swal.fire('Contraseña Erronea')
       }
       if(error.code == 'auth/user-not-found'){
         Swal.fire('Credenciales Erroneas')

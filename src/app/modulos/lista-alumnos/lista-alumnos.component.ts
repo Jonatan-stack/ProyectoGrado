@@ -58,9 +58,9 @@ export class ListaAlumnosComponent implements OnInit {
         this.profesor = usuario;
         this.asignaturasProfesor = usuario.asignaturas;
         this.cursosProfesor = usuario.cursos;
-        this.filterCurso = this.cursosProfesor[0];
         //hace que el filtro empiece siempre por la primera asignatura del profesor
-        this.filterAsignatura = this.asignaturasProfesor[0];
+        //this.filterAsignatura = this.asignaturasProfesor[0];
+        //this.filterCurso = this.cursosProfesor[0];
       }
     });
   }
