@@ -35,7 +35,7 @@
                         <ng-container *ngIf="(usuario.role == 'Alumno' && incluyeAmbos(usuario.asignaturas, usuario.cursos))">
                             <td>{{usuario.displayName}}</td>
                             <td>{{usuario.dni}}</td>
-                            <td><button type="button" class="btn btn-outline-danger btn-sm" (click)="ponerFalta(usuario)">Falta</button></td>
+                            <td><button id="{{usuario.uid}}{{selectClase}}" type="button" class="btn btn-outline-danger btn-sm" (click)="ponerFalta(usuario)">Falta</button></td>
                         </ng-container>
                     </tr>
                 </tbody>

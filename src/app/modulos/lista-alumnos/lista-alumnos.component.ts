@@ -91,6 +91,8 @@ export class ListaAlumnosComponent implements OnInit {
 
     let fecha = f.getDate() + "/" + (f.getMonth() +1) + "/" + f.getFullYear() + ' ' + f.getHours() + ':' + minS;
 
+    document.getElementById(alumno.uid + this.selectClase).setAttribute('disabled', 'true');
+
     this.redactarMail(alumno, fecha);
     this.setFalta(alumno, fecha);
   }
@@ -123,7 +125,6 @@ export class ListaAlumnosComponent implements OnInit {
 
   public setFalta(alumno: Usuario, fecha: string){
     let idFalta = this.profesor.uid + Date.now();
-    console.log(idFalta)
     const falta: Falta = {
       id: idFalta,
       profesor: this.profesor.displayName,
